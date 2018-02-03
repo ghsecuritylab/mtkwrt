@@ -12,6 +12,7 @@ LANG_SV=Svensk
 LANG_BR=Brazil
 LANG_ES=Español
 LANG_UK=Українська
+LANG_CN=简体中文
 PASS_LANG=Sprache wahlen:
 [VPN Passthrough]
 vpn_passthrough_desc=Aktivieren Sie VPN Passthrough, damit eine Virtual Private Network (VPN)-Verbindung durch den Router an die Netzwerk-Clients weitergeleitet werden kann.

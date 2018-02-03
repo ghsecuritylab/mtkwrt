@@ -12,6 +12,7 @@ LANG_SV=Svensk
 LANG_BR=Português do Brasil
 LANG_ES=Español
 LANG_UK=Українська
+LANG_CN=简体中文
 PASS_LANG=Selecione o idioma:
 [AiDisk account alert]
 enable_noaccount_alert=Se você tentar compartilhar os arquivos em seu disco USB, sem criar uma conta compartilhada via AiDisk, ocorrerão problemas no servidor Samba e Mestre Download.

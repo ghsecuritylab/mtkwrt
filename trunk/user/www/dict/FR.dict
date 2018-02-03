@@ -12,6 +12,7 @@ LANG_SV=Svensk
 LANG_BR=Brazil
 LANG_ES=Español
 LANG_UK=Українська
+LANG_CN=简体中文
 PASS_LANG=Sélectionnez la langue:
 [VPN Passthrough]
 VPN_PPTP_Passthrough=Relai PPTP

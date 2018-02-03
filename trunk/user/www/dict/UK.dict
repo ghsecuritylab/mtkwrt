@@ -12,6 +12,7 @@ LANG_SV=Svensk
 LANG_BR=Brazil
 LANG_ES=Español
 LANG_UK=Українська
+LANG_CN=简体中文
 PASS_LANG=Вибір мови Web інтерфейсу:
 VPN_PPTP_Passthrough=Пропускати пакети PPTP?
 VPN_L2TP_Passthrough=Пропускати пакети L2TP?
