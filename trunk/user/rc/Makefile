@@ -64,6 +64,10 @@ ifdef CONFIG_SMP
 OBJS += smp.o
 endif
 
+ifeq ($(CONFIG_FIRMWARE_INCLUDE_TINC),y)
+OBJS += tinc.o
+endif
+
 all: $(OBJS) Makefile
 	$(CC) -o $(EXEC) $(OBJS) $(LDFLAGS)
 	$(STRIP) $(EXEC)
@@ -206,3 +210,8 @@ ifneq ($(BOARD_NUM_USB_PORTS),1)
 	cd $(INSTALLDIR)/sbin && ln -sf rc ejusb2
 endif
 endif
+
+ifeq ($(CONFIG_FIRMWARE_INCLUDE_TINC),y)
+	cd $(INSTALLDIR)/sbin && ln -sf rc tinc_start
+endif
+

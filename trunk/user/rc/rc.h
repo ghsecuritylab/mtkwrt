@@ -18,6 +18,8 @@
 #ifndef _rc_h_
 #define _rc_h_
 
+#include <stdio.h>
+
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -194,6 +196,9 @@ int check_if_file_exist(const char *filepath);
 int check_if_dir_exist(const char *dirpath);
 int check_if_dev_exist(const char *devpath);
 int get_hotplug_action(const char *action);
+
+#define modprobe(mod, args...) ({ char *argv[] = { "modprobe", "-s", mod, ## args, NULL }; _eval(argv, NULL, 0, NULL); })
+extern int modprobe_r(const char *mod);
 
 /* net.c */
 int  route_add(char *ifname, int metric, char *dst, char *gateway, char *genmask);
@@ -412,6 +417,13 @@ void restart_openvpn_server(void);
 int ovpn_server_script_main(int argc, char **argv);
 int ovpn_client_script_main(int argc, char **argv);
 int ovpn_server_expcli_main(int argc, char **argv);
+#endif
+
+#if defined (APP_TINC)
+/* tinc.c */
+int tinc_start_main(int argc_tinc, char *argv_tinc[]);
+void start_tinc(void);
+void stop_tinc(void);
 #endif
 
 /* net_wifi.c */

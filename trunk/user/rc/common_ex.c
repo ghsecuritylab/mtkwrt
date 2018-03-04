@@ -904,3 +904,9 @@ get_hotplug_action(const char *action)
 
 	return 1;
 }
+
+int modprobe_r(const char *mod)
+{
+	return eval("modprobe", "-r", (char *)mod);
+}
+

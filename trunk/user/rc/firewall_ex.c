@@ -840,6 +840,12 @@ ipt_filter_rules(char *man_if, char *wan_if, char *lan_if, char *lan_ip,
 	/* Accept related connections, skip rest of checks */
 	fprintf(fp, "-A %s -m %s %s -j %s\n", dtype, CT_STATE, "ESTABLISHED,RELATED", "ACCEPT");
 
+#if defined (APP_TINC)
+	if(nvram_get_int("tinc_enable") == 1){
+		fprintf(fp, "-A INPUT -i gfw -p tcp -j ACCEPT\n");
+	}
+#endif
+
 	if (is_fw_enabled) {
 		/* Accept all traffic from LAN clients */
 		fprintf(fp, "-A %s -i %s -j %s\n", dtype, lan_if, "ACCEPT");
@@ -1288,8 +1294,10 @@ ipt_mangle_rules(const char *man_if, const char *wan_if, int use_man)
 	if (i_wan_ttl_fix == 2 && nvram_invmatch("mr_enable_x", "1"))
 		i_wan_ttl_fix = 0;
 
+	module_smart_load("iptable_mangle", NULL);
+
 	if (i_wan_ttl_fix) {
-		module_smart_load("iptable_mangle", NULL);
+//		module_smart_load("iptable_mangle", NULL);
 		module_smart_load("xt_HL", NULL);
 	}
 
@@ -1302,6 +1310,22 @@ ipt_mangle_rules(const char *man_if, const char *wan_if, int use_man)
 	fprintf(fp, ":%s %s [0:0]\n", "FORWARD", "ACCEPT");
 	fprintf(fp, ":%s %s [0:0]\n", "OUTPUT", "ACCEPT");
 	fprintf(fp, ":%s %s [0:0]\n", "POSTROUTING", "ACCEPT");
+
+#if defined (APP_TINC)
+	if(nvram_get_int("tinc_enable") == 1){
+		fprintf(fp, ":ROUTE_TINC - [0:0]\n");
+
+		fprintf(fp, "-A PREROUTING -i br0 ! -d %s -j ROUTE_TINC\n", nvram_safe_get("lan_ipaddr"));
+		fprintf(fp, "-A PREROUTING -i ppp+ -j ROUTE_TINC\n");
+		fprintf(fp, "-A PREROUTING -s 8.8.8.8 -p udp --sport 53 -m srd\n");
+		fprintf(fp, "-A POSTROUTING -p udp --dport 53 -m srd ! -d 8.8.8.8 -j DROP\n");
+		fprintf(fp, "-A OUTPUT -p udp --dport 53 -m srd ! -d 8.8.8.8 -j DROP\n");
+
+		fprintf(fp, "-A ROUTE_TINC -i %s -j RETURN\n", wan_if);
+		fprintf(fp, "-A ROUTE_TINC -m iphash --rcheck --rdest -j MARK --set-mark 0x1000/0xf000\n");
+		fprintf(fp, "-A ROUTE_TINC -d 8.8.8.8 -j MARK --set-mark 0x1000/0xf000\n");
+	}
+#endif
 
 	dtype = "PREROUTING";
 
@@ -1756,6 +1780,13 @@ ipt_nat_rules(char *man_if, char *man_ip,
 	fprintf(fp, ":%s - [0:0]\n", MINIUPNPD_CHAIN_IP4_NAT);
 	fprintf(fp, ":%s - [0:0]\n", MINIUPNPD_CHAIN_IP4_NAT_POST);
 
+#if defined (APP_TINC)
+	if(nvram_get_int("tinc_enable") == 1){
+		fprintf(fp, ":TINC - [0:0]\n");
+		fprintf(fp, ":ROUTE_TINC - [0:0]\n");
+	}
+#endif
+
 	// VSERVER chain
 	dtype = IPT_CHAIN_NAME_VSERVER;
 
@@ -1770,6 +1801,19 @@ ipt_nat_rules(char *man_if, char *man_ip,
 	/* pre-routing from VPN client */
 	if (vpnc_if && i_vpnc_sfw == 3)
 		fprintf(fp, "-A PREROUTING -i %s ! -d %s -j %s\n", vpnc_if, lan_net, dtype);
+
+#if defined (APP_TINC)
+	if(nvram_get_int("tinc_enable") == 1){
+		fprintf(fp, "-A PREROUTING -p udp --dport 53 -m mark --mark 0x1000/0xf000 -j DNAT --to-destination 8.8.8.8\n");
+		fprintf(fp, "-A PREROUTING -p udp --dport 53 -m srd -j ROUTE_TINC\n");
+		fprintf(fp, "-A OUTPUT -p udp --dport 53 -m srd -j ROUTE_TINC\n");
+		fprintf(fp, "-A ROUTE_TINC -j MARK --set-mark 0x1000/0xf000\n");
+		fprintf(fp, "-A ROUTE_TINC -j DNAT --to-destination 8.8.8.8\n");
+
+		fprintf(fp, "-A POSTROUTING -j TINC\n");
+		fprintf(fp, "-A TINC -o gfw -j MASQUERADE\n");
+	}
+#endif
 
 	if (is_nat_enabled) {
 		char dmz_ip[16];
@@ -2104,6 +2148,13 @@ start_firewall_ex(void)
 	const char *int_iptables_script = SCRIPT_POST_FIREWALL;
 
 	unit = 0;
+
+#if defined (APP_TINC)
+	if(nvram_get_int("tinc_enable") == 1){
+		modprobe("xt_iphash");
+		modprobe("xt_srd");
+	}
+#endif
 
 	snprintf(lan_if, sizeof(lan_if), "%s", IFNAME_BR);
 	snprintf(man_if, sizeof(man_if), "%s", get_man_ifname(unit));

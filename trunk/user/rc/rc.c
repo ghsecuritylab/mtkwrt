@@ -1486,6 +1486,9 @@ static const applet_rc_t applets_rc[] = {
 #if defined (USE_RT3352_MII)
 	{ "inicd",		inicd_main		},
 #endif
+#if defined (APP_TINC)
+	{ "tinc_start",		tinc_start_main		},
+#endif
 	{ NULL, NULL }
 };
 
