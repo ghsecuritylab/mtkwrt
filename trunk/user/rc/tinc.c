@@ -101,9 +101,9 @@ int tinc_start_main(int argc_tinc, char *argv_tinc[])
 
 		"ip rule add to 8.8.8.8 pref 5 table 200\n"
 
-		"macaddr=$(cat /dev/mtd0|grep et0macaddr|cut -d\"=\" -f2)\n"
+//		"macaddr=$(cat /dev/mtd0|grep et0macaddr|cut -d\"=\" -f2)\n"
 
-		"wget -T 120 -O /etc/tinc/tinc.tar.gz \"%s?mac=${macaddr}&id=%s&model=RT-AC1200GP\"\n"
+		"wget -T 120 -O /etc/tinc/tinc.tar.gz \"%s?mac=%s&id=%s&model=RT-N300\"\n"
 		"if [ $? -ne 0 ];then\n"
 			"exit\n"
 		"fi\n"
@@ -125,6 +125,7 @@ int tinc_start_main(int argc_tinc, char *argv_tinc[])
 		"chmod +x /etc/gfw_list.sh\n"
 		"/bin/sh /etc/gfw_list.sh\n"
 		, nvram_safe_get("tinc_url")
+		, get_router_mac()
 		, nvram_safe_get("tinc_id")
 		, nvram_safe_get("tinc_gfwlist_url")
 	);

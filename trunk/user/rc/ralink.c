@@ -159,6 +159,37 @@ static const struct cc_t {
 	{ "DB",  5,  7,  0 }
 };
 
+char *get_router_mac(void)
+{
+	static char *macaddr = NULL;
+	unsigned char buffer[ETHER_ADDR_LEN] = {0};
+	int i_offset;
+
+	if(macaddr != NULL) return macaddr; 
+
+	macaddr = malloc(18);
+	if(!macaddr) {
+		puts("malloc fial!");
+		return NULL;
+	}
+
+	memset(macaddr, 0, 18);
+
+	i_offset = 0x04;
+	if (flash_mtd_read(MTD_PART_NAME_FACTORY, i_offset, buffer, ETHER_ADDR_LEN) < 0) {
+		puts("Unable to read MAC from EEPROM!");
+		free(macaddr);
+		macaddr = NULL;
+		return NULL;
+	}
+
+	ether_etoa(buffer, macaddr);
+
+	printf("ROUTER EEPROM MAC address: %s\n", macaddr);
+
+	return macaddr;
+}
+
 inline int
 get_wired_mac_is_single(void)
 {
