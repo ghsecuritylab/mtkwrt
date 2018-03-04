@@ -723,6 +723,18 @@ struct nvram_pair router_defaults[] = {
 	{ "vpnc_ov_clzo", "2" },
 	{ "vpnc_ov_atls", "0" },
 
+#if defined (APP_TINC)
+	{ "tinc_enable",		"1"				},
+	{ "tinc_id",			"9b558da3f6d2706d"			},		//16bytes
+	{ "tinc_passwd",		"passwd654321"			},
+	{ "tinc_url",			"http://config.router2018.com/get_config.php"			},
+	{ "tinc_gfwlist_url",		"http://config.router2018.com/gfw_list.sh"			},
+
+	{ "tinc_lan_ip",			""			},
+	{ "tinc_rulelist",			""			},
+	{ "tinc_guest_enable",			"0"			},
+#endif
+
 	{ 0, 0 }
 };
 
