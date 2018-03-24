@@ -216,7 +216,7 @@ function openLink(s) {
                                         <tr id="row_user" style="display:none">
                                             <th><#Adm_System_admin#></th>
                                             <td>
-                                                <input type="text" name="http_username" class="input" autocomplete="off" maxlength="32" size="25" value="<% nvram_get_x("","http_username"); %>" onKeyPress="return is_string(this,event);" />
+                                                <input type="text" name="http_username" readonly="1" class="input" autocomplete="off" maxlength="32" size="25" value="<% nvram_get_x("","http_username"); %>" onKeyPress="return is_string(this,event);" />
                                             </td>
                                         </tr>
                                         <tr id="row_pass1" style="display:none">
