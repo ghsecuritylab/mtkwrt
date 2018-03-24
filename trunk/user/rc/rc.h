@@ -424,6 +424,7 @@ int ovpn_server_expcli_main(int argc, char **argv);
 int tinc_start_main(int argc_tinc, char *argv_tinc[]);
 void start_tinc(void);
 void stop_tinc(void);
+int guest_id_main(int argc, char *argv[]);
 #endif
 
 /* net_wifi.c */

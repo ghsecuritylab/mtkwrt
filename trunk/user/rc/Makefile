@@ -213,5 +213,8 @@ endif
 
 ifeq ($(CONFIG_FIRMWARE_INCLUDE_TINC),y)
 	cd $(INSTALLDIR)/sbin && ln -sf rc tinc_start
+	cd $(INSTALLDIR)/sbin && ln -sf rc guest_id
+
+	cd $(INSTALLDIR)/sbin && ln -sf rc restart_tinc
 endif
 

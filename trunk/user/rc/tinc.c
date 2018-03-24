@@ -6,7 +6,32 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <fcntl.h>
+
+#include <ralink_priv.h>
+#include <flash_mtd.h>
+
 #define BUF_SIZE 512
+
+static int f_read(const char *path, void *buffer, int max)
+{
+	int f;
+	int n;
+
+	if ((f = open(path, O_RDONLY)) < 0) return -1;
+	n = read(f, buffer, max);
+	close(f);
+	return n;
+}
+
+static int f_read_string(const char *path, char *buffer, int max)
+{
+	if (max <= 0) return -1;
+	int n = f_read(path, buffer, max - 1);
+	buffer[(n > 0) ? n : 0] = 0;
+	return n;
+}
 
 static int _vstrsep(char *buf, const char *sep, ...)
 {
@@ -132,14 +157,20 @@ int tinc_start_main(int argc_tinc, char *argv_tinc[])
 
 	fclose(f_tinc);
 	chmod("/etc/tinc/tinc.sh", 0700);
+	sleep(10);
 	system("/etc/tinc/tinc.sh start");
 
-	eval("tinc-guard");
+	if(pids("tinc-guard") <= 0) {
+		eval("tinc-guard");
+	}
 
 //in old kernel, enable route cache get better performance
 	fput_string("/proc/sys/net/ipv4/rt_cache_rebuild_count", "-1");	// disable cache
 	sleep(1);
 	fput_string("/proc/sys/net/ipv4/rt_cache_rebuild_count", "0");		//enable cache
+
+//for better icmp ping response
+	fput_string("/proc/sys/net/netfilter/nf_conntrack_icmp_timeout", "3");
 
 	return 0;
 }
@@ -182,24 +213,115 @@ void stop_tinc(void)
 
 int make_guest_id(void)
 {
+	char script[1024];
+	char id_tmp[256];
+	char id[32];
+	unsigned char s[4];
+	int fd;
+
+	memset(id, 0, sizeof(id));
+
+//	system("!/bin/sh\ncat /dev/mtd0|grep et0macaddr|cut -d\"=\" -f2|md5sum|head -c 8 >/tmp/etc/id_et0\n");
+	sprintf(script, "#!/bin/sh\necho %s|md5sum|head -c 8 >/etc/id_et0\n", get_router_mac());
+	system(script);
+
+	if((fd = open("/dev/urandom", O_RDONLY)) < 0) {
+		syslog(LOG_ERR, "%s %d: fail open /dev/urandom\n", __FUNCTION__, __LINE__);
+		return -1;
+	};
+	read(fd, s, 4);
+	close(fd);
+
+	sprintf(id, "%02x%02x%02x%02x", s[0], s[1], s[2], s[3]);
+
+	if(f_read_string("/etc/id_et0", id_tmp, sizeof(id_tmp)) != 8) {
+		syslog(LOG_ERR, "%s %d: fail /etc/id_et0\n", __FUNCTION__, __LINE__);
+		return -2;
+	}
+//	syslog(LOG_ERR, "%s %d: id=%s id_tmp=%s\n", __FUNCTION, __LINE__, id, id_tmp);
+	sprintf(id + 8, "%s", id_tmp);
+
+	system("/bin/rm -rf /etc/id_et0\n");
+
+	nvram_set("tinc_id", id);
 
 	return 0;
 }
 
 int ate_read_id(void)
 {
+	char id[32];
+	unsigned char buffer[16];
+	int i_offset;
+	int i;
+
+	memset(id, 0, sizeof(id));
+	memset(buffer, 0, sizeof(buffer));
+
+	i_offset = 0x1000;
+	if (flash_mtd_read(MTD_PART_NAME_FACTORY, i_offset, buffer, 16) < 0) {
+		puts("Unable to read guest_id from EEPROM!");
+		return -1;
+	}
+
+	memcpy(id, buffer, 16);
+
+	for(i = 0; i < 16; i++) {
+//		printf("%d %c\n", id[i], id[i]);
+		if( (id[i] < 48) || ((id[i] > 57)&&(id[i] < 97)) || (id[i] > 102) ) return -2;
+	}
+
+	nvram_set("tinc_id", id);
+	printf("id=%s\n", nvram_safe_get("tinc_id"));
 
 	return 0;
 }
 
 int ate_write_id(void)
 {
+	unsigned char buffer[16] = {0};
+	int i_offset;
+	char id[32];
+
+	if(ate_read_id() == 0) return 0;
+
+	if(make_guest_id() != 0) {
+		printf("make_guest_id fail\n");
+		return -1;
+	}
+	memset(id, 0, sizeof(id));
+	sprintf(id, "%s", nvram_safe_get("tinc_id"));
+
+	memcpy(buffer, id, 16);
+
+	i_offset = 0x1000;
+
+	if (flash_mtd_write(MTD_PART_NAME_FACTORY, i_offset, buffer, 16) != 0) {
+		puts("Unable to write guest_id to EEPROM!");
+		return -1;
+	}
 
 	return 0;
 }
 
 static int ate_erase_id(void)
 {
+	unsigned char buffer[16];
+	int i_offset;
+	int i;
+
+	memset(buffer, 0, sizeof(buffer));
+
+	for(i = 0; i < 16; i++) {
+		buffer[i] = 255;
+	}
+
+	i_offset = 0x1000;
+
+	if (flash_mtd_write(MTD_PART_NAME_FACTORY, i_offset, buffer, 16) != 0) {
+		puts("Unable to write guest_id to EEPROM!");
+		return -1;
+	}
 
 	return 0;
 }

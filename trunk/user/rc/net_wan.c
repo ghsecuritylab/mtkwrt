@@ -1021,6 +1021,11 @@ start_wan(void)
 		}
 	}
 
+#if defined (APP_TINC)
+	stop_tinc();
+	start_tinc();
+#endif
+
 	set_passthrough_pppoe(1);
 }
 

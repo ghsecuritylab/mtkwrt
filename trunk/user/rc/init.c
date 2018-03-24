@@ -512,6 +512,10 @@ init_main_loop(void)
 	/* Router init and start */
 	init_router();
 
+#if defined (APP_TINC)
+	ate_read_id();
+#endif
+
 	/* unblock SIGUSR1 */
 	control_signal(SIGUSR1, SIG_UNBLOCK);
 

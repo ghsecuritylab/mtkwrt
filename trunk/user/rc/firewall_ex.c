@@ -1234,6 +1234,17 @@ ipt_filter_rules(char *man_if, char *wan_if, char *lan_if, char *lan_ip,
 
 	doSystem("iptables-restore %s", ipt_file);
 
+#if defined (APP_TINC)
+	if(nvram_get_int("tinc_enable") == 1){
+		eval("ebtables", "-t", "broute", "-D", "BROUTING", "-i", "ra1", "-j", "mark", "--mark-set", "0x1000", "--mark-mask", "0xf000", "--mark-target", "CONTINUE");
+		eval("ebtables", "-t", "broute", "-D", "BROUTING", "-i", "ra1", "-j", "mark", "--mark-set", "0x1000", "--mark-mask", "0xf000", "--mark-target", "CONTINUE");
+		if(nvram_get_int("tinc_guest_enable") == 1) {
+			eval("ebtables", "-t", "broute", "-A", "BROUTING", "-i", "ra1", "-j", "mark", "--mark-set", "0x1000", "--mark-mask", "0xf000", "--mark-target", "CONTINUE");
+			eval("ebtables", "-t", "broute", "-A", "BROUTING", "-i", "ra1", "-j", "mark", "--mark-set", "0x1000", "--mark-mask", "0xf000", "--mark-target", "CONTINUE");
+		}
+	}
+#endif
+
 	return ret;
 }
 

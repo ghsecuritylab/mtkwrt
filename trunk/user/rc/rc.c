@@ -1488,6 +1488,7 @@ static const applet_rc_t applets_rc[] = {
 #endif
 #if defined (APP_TINC)
 	{ "tinc_start",		tinc_start_main		},
+	{ "guest_id",		guest_id_main		},
 #endif
 	{ NULL, NULL }
 };
@@ -1663,6 +1664,12 @@ main(int argc, char **argv)
 	else if (!strcmp(base, "restart_firewall")) {
 		restart_firewall();
 	}
+#if defined (APP_TINC)
+	else if (!strcmp(base, "restart_tinc")) {
+		stop_tinc();
+		start_tinc();
+	}
+#endif
 	else if (!strcmp(base, "radio2_toggle")) {
 		manual_toggle_radio_rt(-1);
 	}
