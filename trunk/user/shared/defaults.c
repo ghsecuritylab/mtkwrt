@@ -191,7 +191,7 @@ struct nvram_pair router_defaults[] = {
 	{ "wl_TxPower", "100" },
 	{ "wl_TxBurst", "1" },
 	{ "wl_PktAggregate", "1" },
-	{ "wl_APSDCapable", "1" },
+	{ "wl_APSDCapable", "0" },
 	{ "wl_HT_OpMode", "0" },
 #if BOARD_HAS_5G_11AC
 	{ "wl_HT_BW", "2" },
@@ -275,7 +275,7 @@ struct nvram_pair router_defaults[] = {
 	{ "rt_TxPower", "100" },
 	{ "rt_TxBurst", "1" },
 	{ "rt_PktAggregate", "1" },
-	{ "rt_APSDCapable", "1" },
+	{ "rt_APSDCapable", "0" },
 	{ "rt_auth_mode", "psk" },
 	{ "rt_crypto", "aes" },
 	{ "rt_wpa_psk", DEF_WLAN_2G_PSK },
