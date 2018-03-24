@@ -403,7 +403,7 @@ menuL2_link  = new Array("", tablink[0][1], tablink[1][1], tablink[2][1], tablin
 
 //Level 1 Menu in Gateway, Router mode
 menuL1_title = new Array("", "<#menu1#>", "<#menu3#>", "<#menu2#>", "<#menu6#>", "<#menu4#>", "<#menu5_8#>", "<#menu5#>");
-menuL1_link = new Array("", "index.asp", "aidisk.asp", "vpnsrv.asp", "vpncli.asp", "Main_TrafficMonitor_realtime.asp", "Advanced_System_Info.asp", "as.asp");
+menuL1_link = new Array("", "index.asp", "aidisk.asp", "vpnsrv.asp", "cli.asp", "Main_TrafficMonitor_realtime.asp", "Advanced_System_Info.asp", "Advanced_WAN_Content.asp");
 menuL1_icon = new Array("", "icon-home", "icon-hdd", "icon-retweet", "icon-globe", "icon-tasks", "icon-random", "icon-wrench");
 
 function show_menu(L1, L2, L3){
@@ -501,6 +501,35 @@ function show_menu(L1, L2, L3){
 			menuL1_title[2] = "";
 		}
 	}
+
+	menuL2_link[8] = "";
+	menuL2_title[8] = "";
+
+//hide Advanced_OperationMode_Content.asp
+	tabtitle[6][3] = "";
+	tablink[6][3] = "";
+//hide Advanced_WMode2g_Content.asp
+	tabtitle[0][3] = "";
+	tablink[0][3] = "";
+//hide Advanced_WSecurity2g_Content.asp
+	tabtitle[0][5] = "";
+	tablink[0][5] = "";
+//hide Advanced_IPv6_Content.asp
+	tabtitle[3][2] = "";
+	tablink[3][2] = "";
+//hide Advanced_IPTV_Content.asp
+	tabtitle[2][4] = "";
+	tablink[2][4] = "";
+//hide Advanced_WAdvanced2g_Content.asp
+	tabtitle[0][6] = "";
+	tablink[0][6] = "";
+//hide Advanced_Console_Content.asp
+	tabtitle[6][6] = "";
+	tablink[6][6] = "";
+
+//hide vpnsrv.asp
+	menuL1_link[3] = "";
+	menuL1_title[3] = "";
 
 	for(i = 1; i <= menuL1_title.length-1; i++){
 		if(menuL1_title[i] == "")
