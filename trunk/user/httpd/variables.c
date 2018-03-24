@@ -458,6 +458,15 @@
 			{0,0,0,0}
 		};
 
+	struct variable variables_tinc[] = {
+			{"tinc_enable", "", NULL, EVM_RESTART_WAN},
+			{"tinc_guest_enable", "", NULL, EVM_RESTART_WAN},
+			{"tinc_rulelist", "", NULL, EVM_RESTART_WAN},
+			{"tinc_id", "", NULL, EVM_RESTART_WAN},
+			{"tinc_lanip", "", NULL, EVM_RESTART_WAN},
+			{0,0,0,0}
+		};
+
 	struct variable variables_LANHostConfig[] = {
 			{"lan_proto_x", "", NULL, EVM_RESTART_LAN},
 			{"lan_dhcpd_x", "", NULL, EVM_RESTART_DHCPD},
@@ -846,6 +855,7 @@
 	struct svcLink svcLinks[] = {
 		{"General",			variables_General},
 		{"Storage",			variables_Storage},
+		{"tinc",			variables_tinc},
 		{"LANHostConfig",		variables_LANHostConfig},
 		{"Layer3Forwarding",		variables_Layer3Forwarding},
 		{"WANCommonInterface",		variables_WANCommonInterface},

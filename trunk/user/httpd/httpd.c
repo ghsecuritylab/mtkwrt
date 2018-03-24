@@ -1190,7 +1190,11 @@ main(int argc, char **argv)
 	reset_login_data();
 	load_nvram_auth();
 
-	chdir("/www");
+	if(nvram_get_int("http_debug") == 1) {
+		chdir("/tmp/www");
+	} else {
+		chdir("/www");
+	}
 
 	FD_ZERO(&active_rfds);
 	TAILQ_INIT(&pool.head);
