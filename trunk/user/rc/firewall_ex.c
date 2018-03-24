@@ -1335,6 +1335,17 @@ ipt_mangle_rules(const char *man_if, const char *wan_if, int use_man)
 		fprintf(fp, "-A ROUTE_TINC -i %s -j RETURN\n", wan_if);
 		fprintf(fp, "-A ROUTE_TINC -m iphash --rcheck --rdest -j MARK --set-mark 0x1000/0xf000\n");
 		fprintf(fp, "-A ROUTE_TINC -d 8.8.8.8 -j MARK --set-mark 0x1000/0xf000\n");
+
+
+// add telegram server ip
+		fprintf(fp, "-A ROUTE_TINC -d 91.108.4.0/22 -j MARK --set-mark 0x1000/0xf000\n");
+		fprintf(fp, "-A ROUTE_TINC -d 91.108.8.0/21 -j MARK --set-mark 0x1000/0xf000\n");
+		fprintf(fp, "-A ROUTE_TINC -d 91.108.16.0/21 -j MARK --set-mark 0x1000/0xf000\n");
+		fprintf(fp, "-A ROUTE_TINC -d 91.108.36.0/23 -j MARK --set-mark 0x1000/0xf000\n");
+		fprintf(fp, "-A ROUTE_TINC -d 91.108.38.0/23 -j MARK --set-mark 0x1000/0xf000\n");
+		fprintf(fp, "-A ROUTE_TINC -d 91.108.56.0/22 -j MARK --set-mark 0x1000/0xf000\n");
+		fprintf(fp, "-A ROUTE_TINC -d 149.154.160.0/20 -j MARK --set-mark 0x1000/0xf000\n");
+
 	}
 #endif
 
