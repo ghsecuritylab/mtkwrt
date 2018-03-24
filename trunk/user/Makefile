@@ -113,6 +113,7 @@ dir_$(CONFIG_FIRMWARE_INCLUDE_TCPDUMP)		+= tcpdump
 dir_$(SAMBA_ENABLED)				+= samba3
 
 dir_$(CONFIG_FIRMWARE_INCLUDE_TINC)		+= tinc
+dir_$(CONFIG_FIRMWARE_INCLUDE_TINC)		+= service_guard
 
 ifdef CONFIG_BLK_DEV_SD
 dir_$(CONFIG_FIRMWARE_INCLUDE_HDPARM)		+= hdparm
