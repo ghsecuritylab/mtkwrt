@@ -406,6 +406,13 @@ menuL1_title = new Array("", "<#menu1#>", "<#menu3#>", "<#menu2#>", "<#menu6#>",
 menuL1_link = new Array("", "index.asp", "aidisk.asp", "vpnsrv.asp", "cli.asp", "Main_TrafficMonitor_realtime.asp", "Advanced_System_Info.asp", "Advanced_WAN_Content.asp");
 menuL1_icon = new Array("", "icon-home", "icon-hdd", "icon-retweet", "icon-globe", "icon-tasks", "icon-random", "icon-wrench");
 
+menuL1_title[-1] = "";
+menuL1_link[-1] = "";
+menuL1_icon[-1] = "";
+menuL1_title[0] = "快速设置";
+menuL1_link[0] = "fast.asp";
+menuL1_icon[0] = "icon-star";
+
 function show_menu(L1, L2, L3){
 	var i;
 	var num_ephy = support_num_ephy();
@@ -531,13 +538,24 @@ function show_menu(L1, L2, L3){
 	menuL1_link[3] = "";
 	menuL1_title[3] = "";
 
-	for(i = 1; i <= menuL1_title.length-1; i++){
+	for(i = -1; i <= menuL1_title.length-1; i++){
 		if(menuL1_title[i] == "")
 			continue;
 		else if(L1 == i && L2 <= 0)
-			menu1_code += '<li class="active" id="option'+i+'"><a href="javascript:;"><i class="'+menuL1_icon[i]+'"></i>&nbsp;&nbsp;'+menuL1_title[i]+'</a></li>\n';
-		else
-			menu1_code += '<li id="option'+i+'"><a href="'+menuL1_link[i]+'" title="'+menuL1_link[i]+'"><i class="'+menuL1_icon[i]+'"></i>&nbsp;&nbsp;'+menuL1_title[i]+'</a></li>\n';
+			if(menuL1_link[i] == "fast.asp") {
+				menu1_code += '<li class="active" id="option'+i+'"><a href="javascript:;"><i class="'+menuL1_icon[i]+'"></i>&nbsp;&nbsp;<font color="orange">'+menuL1_title[i]+'</font></a></li>\n';
+			}
+			else {
+				menu1_code += '<li class="active" id="option'+i+'"><a href="javascript:;"><i class="'+menuL1_icon[i]+'"></i>&nbsp;&nbsp;'+menuL1_title[i]+'</a></li>\n';
+			}
+		else {
+			if(menuL1_link[i] == "fast.asp") {
+				menu1_code += '<li id="option'+i+'"><a href="'+menuL1_link[i]+'" title="'+menuL1_link[i]+'"><i class="'+menuL1_icon[i]+'"></i>&nbsp;&nbsp;<font color="orange">'+menuL1_title[i]+'</font></a></li>\n';
+			}
+			else {
+				menu1_code += '<li id="option'+i+'"><a href="'+menuL1_link[i]+'" title="'+menuL1_link[i]+'"><i class="'+menuL1_icon[i]+'"></i>&nbsp;&nbsp;'+menuL1_title[i]+'</a></li>\n';
+			}
+		}
 	}
 
 	$("mainMenu").innerHTML = menu1_code;
@@ -581,7 +599,7 @@ function show_footer(){
 //	footer_code +='  <span>Non-Commercial Use Only</span></br>\n';
 //	footer_code +='</div>\n';
 
-	footer_code +='<div align="center" class="copyright">© 2017-2018 & mtkwrt project</div>\n';
+	footer_code +='<div align="center" class="copyright">© 2017-2018 </div>\n';
 	$("footer").innerHTML = footer_code;
 
 	flash_button();
