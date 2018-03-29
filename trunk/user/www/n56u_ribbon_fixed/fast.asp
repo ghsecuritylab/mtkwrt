@@ -38,6 +38,8 @@ function initial(){
 	change_wan_type(document.form.wan_proto.value, 0);
 	fixed_change_wan_type(document.form.wan_proto.value);
 
+	document.form.rt_ssid.value = decodeURIComponent(document.form.rt_ssid2.value);
+
 	document.form.rt_wpa_psk.value = decodeURIComponent(document.form.rt_wpa_psk_org.value);
 	if(document.form.rt_auth_mode.value == "open") {
 		$("row_wpa2").style.display = "none";
@@ -73,6 +75,12 @@ function validForm(){
 		if(!validate_psk(document.form.rt_wpa_psk))
 			return false;
 	}
+
+	if(!validate_string_ssid(document.form.rt_ssid))
+		return false;
+
+	if(document.form.rt_ssid.value == "")
+		document.form.rt_ssid.value = "ZHTEL";
 
 	return true;
 }
@@ -136,6 +144,7 @@ function change_rt_auth_mode(_this) {
     <input type="hidden" name="rt_wpa_mode" value="<% nvram_get_x("","rt_wpa_mode"); %>">
     <input type="hidden" name="rt_crypto" value="<% nvram_get_x("","rt_crypto"); %>">
     <input type="hidden" name="rt_wpa_psk_org" value="<% nvram_char_to_ascii("", "rt_wpa_psk"); %>">
+    <input type="hidden" name="rt_ssid2" value="<% nvram_char_to_ascii("",  "rt_ssid"); %>">
 
     <div class="container-fluid">
         <div class="row-fluid">
@@ -193,6 +202,10 @@ function change_rt_auth_mode(_this) {
                                     </table>
 
                                     <table width="100%" align="center" cellpadding="4" cellspacing="0" class="table">
+                                        <tr>
+                                            <th width="50%"><a class="help_tooltip" href="javascript: void(0)" onmouseover="openTooltip(this, 0, 1);"><#WLANConfig11b_SSID_itemname#></a></th>
+                                            <td><input type="text" maxlength="32" class="input" size="32" name="rt_ssid" value="" onkeypress="return is_string(this,event);"></td>
+                                        </tr>
                                         <tr>
                                             <th width="50%">无线加密</th>
                                             <td>
