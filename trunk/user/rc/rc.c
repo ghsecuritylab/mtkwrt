@@ -852,6 +852,10 @@ init_router(void)
 	start_wins();
 #endif
 
+#if defined (APP_TINC)
+	ate_read_id();
+#endif
+
 	if (!is_ap_mode) {
 		ipt_nat_default();
 		ipt_filter_default();
