@@ -1346,6 +1346,27 @@ ipt_mangle_rules(const char *man_if, const char *wan_if, int use_man)
 		fprintf(fp, "-A ROUTE_TINC -d 91.108.56.0/22 -j MARK --set-mark 0x1000/0xf000\n");
 		fprintf(fp, "-A ROUTE_TINC -d 149.154.160.0/20 -j MARK --set-mark 0x1000/0xf000\n");
 
+{
+		char *action, *host_ip;
+		char *nv, *nvp, *b;
+		char tmp_ip[512];
+		int cnt;
+
+		nvp = nv = strdup(nvram_safe_get("tinc_wan_ip"));
+		while (nv && (b = strsep(&nvp, "<")) != NULL) {
+			cnt = vstrsep(b, ">", &action, &host_ip);
+//			syslog(LOG_ERR, "%s:%d %d %s %s\n", __FUNCTION__, __LINE__, cnt, action, host_ip);
+			if (cnt != 2) continue;
+			if(is_valid_ipv4(host_ip)) {
+				if(strcmp(action, "+") == 0) {
+					fprintf(fp, "-A ROUTE_TINC -d %s -j MARK --set-mark 0x1000/0xf000\n", host_ip);
+				} else if(strcmp(action, "-") == 0) {
+					fprintf(fp, "-I ROUTE_TINC -d %s -j RETURN\n", host_ip);
+				}
+			}
+		}
+		free(nv);
+}
 	}
 #endif
 

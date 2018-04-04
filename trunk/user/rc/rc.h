@@ -200,6 +200,9 @@ int get_hotplug_action(const char *action);
 #define modprobe(mod, args...) ({ char *argv[] = { "modprobe", "-s", mod, ## args, NULL }; _eval(argv, NULL, 0, NULL); })
 extern int modprobe_r(const char *mod);
 
+extern int _vstrsep(char *buf, const char *sep, ...);
+#define vstrsep(buf, sep, args...) _vstrsep(buf, sep, args, NULL)
+
 /* net.c */
 int  route_add(char *ifname, int metric, char *dst, char *gateway, char *genmask);
 int  route_del(char *ifname, int metric, char *dst, char *gateway, char *genmask);

@@ -910,3 +910,19 @@ int modprobe_r(const char *mod)
 	return eval("modprobe", "-r", (char *)mod);
 }
 
+int _vstrsep(char *buf, const char *sep, ...)
+{
+	va_list ap;
+	char **p;
+	int n;
+
+	n = 0;
+	va_start(ap, sep);
+	while ((p = va_arg(ap, char **)) != NULL) {
+		if ((*p = strsep(&buf, sep)) == NULL) break;
+		++n;
+	}
+	va_end(ap);
+	return n;
+}
+
