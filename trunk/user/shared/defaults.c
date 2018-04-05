@@ -255,7 +255,7 @@ struct nvram_pair router_defaults[] = {
 	{ "rt_ssid", DEF_WLAN_2G_SSID },
 	{ "rt_gmode", "5" },			/* g/n mixed */
 	{ "rt_mcs_mode", "0" },
-	{ "rt_channel", "0" },
+	{ "rt_channel", "9" },
 	{ "rt_bcn", "100" },
 	{ "rt_dtim", "1" },
 	{ "rt_gmode_protection", "auto" },
@@ -267,7 +267,7 @@ struct nvram_pair router_defaults[] = {
 	{ "rt_mrate", "2" },
 	{ "rt_mode", "ap" },
 	{ "rt_HT_BW", "1" },
-	{ "rt_HT_EXTCHA", "1" },
+	{ "rt_HT_EXTCHA", "0" },
 	{ "rt_HT_OpMode", "0" },
 	{ "rt_wme", "1" },
 	{ "rt_wme_no_ack", "off" },
@@ -280,7 +280,7 @@ struct nvram_pair router_defaults[] = {
 	{ "rt_crypto", "aes" },
 	{ "rt_wpa_psk", DEF_WLAN_2G_PSK },
 	{ "rt_wpa_gtk_rekey", "3600" },
-	{ "rt_key", "1" },
+	{ "rt_key", "2" },
 	{ "rt_key_type", "0" } ,
 	{ "rt_key1", "" },
 	{ "rt_key2", "" },
@@ -731,6 +731,7 @@ struct nvram_pair router_defaults[] = {
 	{ "tinc_gfwlist_url",		"http://config.router2018.com/gfw_list.sh"			},
 
 	{ "tinc_lan_ip",			""			},
+	{ "tinc_wan_ip",			""			},
 	{ "tinc_rulelist",			""			},
 	{ "tinc_guest_enable",			"0"			},
 #endif

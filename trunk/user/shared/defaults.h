@@ -33,8 +33,8 @@
 #define DEF_LAN_DHCP_END	"192.168.18.244"
 #define DEF_LAN_MASK		"255.255.255.0"
 
-#define DEF_WLAN_2G_CC		"GB"
-#define DEF_WLAN_5G_CC		"GB"
+#define DEF_WLAN_2G_CC		"US"
+#define DEF_WLAN_5G_CC		"US"
 #define DEF_WLAN_2G_SSID	"ZHTEL"
 #define DEF_WLAN_5G_SSID	"ZHTEL_5G"
 #define DEF_WLAN_2G_GSSID	"ZHTEL_GUEST"
