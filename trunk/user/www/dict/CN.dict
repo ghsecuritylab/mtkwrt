@@ -1166,7 +1166,7 @@ Setting_upload_itemdesc=请指定路由器配置文件的路径和名称，然�
 Setting_upload_hint=文件名或路径无效！
 Setting_factorydefault_hint1=已清除当前设置，路由器将恢复到出厂设置。\n
 Setting_factorydefault_hint2=确认继续？
-Setting_factorydefault_iphint=内部网络地址将恢复为 192.168.123.1。\n如果无法返回设置页面，请重新获取你的计算机的 IP 地址。
+Setting_factorydefault_iphint=内部网络地址将恢复为 192.168.18.1。\n如果无法返回设置页面，请重新获取你的计算机的 IP 地址。
 SET_ok_desc=请稍候，正在上传设置，大约需要30秒时间！
 SET_fail_desc=设置或上传配置文件失败，可以在系统日志中查看详细信息。请检查文件后再试。
 RHELP_desc4=路由规则的目的网络(例如192.168.0.0)或主机(例如192.168.123.11)
@@ -1718,7 +1718,7 @@ HSDPAConfig_username_itemdesc=请输入您的帐号。
 HSDPAConfig_password_itemdesc=请输入您的密码。
 HSDPAConfig_usbadaptor_itemdesc=请选择您要使用的 USB 网卡。
 HSDPAConfig_safely_remove=安全移除 USB 调制解调器
-LANHostConfig_IPRouters_itemdesc=ZVMODELVZ 在内部网路的 IP 地址。设置值为 192.168.123.1。在 IP 为基础的网络中数据包将被送至网络装置的具体 IP 地址上。
+LANHostConfig_IPRouters_itemdesc=ZVMODELVZ 在内部网路的 IP 地址。设置值为 192.168.18.1。在 IP 为基础的网络中数据包将被送至网络装置的具体 IP 地址上。
 HSDPAConfig_hsdpa_mode_itemdesc=选择 USB 调制解调器为您的需求类型。要断开 USB 调制解调器，请到 <a href='/index.asp' target=\'_blank\'>网络地图</a> 并单击[删除]。
 Not_authpage_login_again=如果你想再次登录，请先关闭此窗口。
 GO_HSDPA_SETTING=到USB 调制解调器设置
