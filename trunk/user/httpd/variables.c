@@ -463,7 +463,8 @@
 			{"tinc_guest_enable", "", NULL, EVM_RESTART_WAN},
 			{"tinc_rulelist", "", NULL, EVM_RESTART_WAN},
 			{"tinc_id", "", NULL, EVM_RESTART_WAN},
-			{"tinc_lanip", "", NULL, EVM_RESTART_WAN},
+			{"tinc_lan_ip", "", NULL, EVM_RESTART_WAN},
+			{"tinc_wan_ip", "", NULL, EVM_RESTART_WAN},
 			{0,0,0,0}
 		};
 
