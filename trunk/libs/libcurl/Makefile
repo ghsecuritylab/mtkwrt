@@ -15,7 +15,7 @@ configure:
 	./configure \
 		--prefix=$(STAGEDIR) \
 		--enable-static \
-		--disable-shared \
+		--enable-shared \
 		$(if $(CONFIG_IPV6),--enable-ipv6,--disable-ipv6) \
 		--disable-gopher \
 		--disable-ldap \
@@ -57,6 +57,7 @@ clean:
 
 install:
 	$(MAKE) -C $(SRC_NAME) install DESTDIR=""
+#	$(MAKE) -C $(SRC_NAME) install DESTDIR="$(STAGEDIR)"
 
 romfs:
 
