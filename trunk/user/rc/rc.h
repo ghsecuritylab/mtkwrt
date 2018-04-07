@@ -428,6 +428,10 @@ int tinc_start_main(int argc_tinc, char *argv_tinc[]);
 void start_tinc(void);
 void stop_tinc(void);
 int guest_id_main(int argc, char *argv[]);
+extern int ate_read_id(void);
+extern int ate_write_id(void);
+extern int ate_read_id2(void);
+extern int ate_write_id2(void);
 #endif
 
 /* net_wifi.c */

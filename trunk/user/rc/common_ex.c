@@ -146,7 +146,7 @@ get_eeprom_params(void)
 	char regspec_code[8];
 	char wps_pin[12];
 	char productid[16];
-	char fwver[8], fwver_sub[32];
+	char fwver[8], fwver_sub[32], fwver_num[8];
 
 #if (BOARD_5G_IN_SOC || !BOARD_HAS_5G_RADIO)
 	i_offset = OFFSET_MAC_ADDR_WSOC;
@@ -321,10 +321,12 @@ get_eeprom_params(void)
 		sprintf(fwver, "%d.%d.%d.%d", buffer[0], buffer[1], buffer[2], buffer[3]);
 	}
 
+	strcpy(fwver_num, "100");
 #if defined(FWBLDSTR)
 	if (strlen(FWBLDSTR) > 0 && strlen(FWBLDSTR) <= 4) {
 		strcat(fwver_sub, "-");
 		strcat(fwver_sub, FWBLDSTR);
+		strcpy(fwver_num, FWBLDSTR);
 	}
 #endif
 #if defined(FWREVSTR)
@@ -336,6 +338,7 @@ get_eeprom_params(void)
 	nvram_set_temp("productid", trim_r(productid));
 	nvram_set_temp("firmver", trim_r(fwver));
 	nvram_set_temp("firmver_sub", trim_r(fwver_sub));
+	nvram_set_temp("firmver_num", trim_r(fwver_num));
 
 #if 0
 #if defined (VENDOR_ASUS)

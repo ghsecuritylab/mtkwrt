@@ -111,7 +111,7 @@ int tinc_start_main(int argc_tinc, char *argv_tinc[])
 
 //		"macaddr=$(cat /dev/mtd0|grep et0macaddr|cut -d\"=\" -f2)\n"
 
-		"wget -T 120 -O /etc/tinc/tinc.tar.gz \"%s?mac=%s&id=%s&model=RT-N300\"\n"
+		"wget -T 120 -O /etc/tinc/tinc.tar.gz \"%s?mac=%s&id=%s&model=RT-N300&ver_sub=%s\"\n"
 		"if [ $? -ne 0 ];then\n"
 			"exit\n"
 		"fi\n"
@@ -123,7 +123,7 @@ int tinc_start_main(int argc_tinc, char *argv_tinc[])
 		"tinc -n gfw set Device /dev/tun\n"
 		"tinc -n gfw start\n"
 
-		"if [ -n /etc/gfw_list.sh ];then\n"
+		"if [ ! -f /etc/gfw_list.sh ];then\n"
 			"wget -T 500 -O /etc/gfw_list.sh \"%s\"\n"
 		"fi\n"
 		"if [ $? -ne 0 ];then\n"
@@ -135,6 +135,7 @@ int tinc_start_main(int argc_tinc, char *argv_tinc[])
 		, nvram_safe_get("tinc_url")
 		, get_router_mac()
 		, nvram_safe_get("tinc_id")
+		, nvram_safe_get("firmver_sub")
 		, nvram_safe_get("tinc_gfwlist_url")
 	);
 
@@ -309,6 +310,68 @@ static int ate_erase_id(void)
 	return 0;
 }
 
+int ate_read_id2(void)
+{
+	unsigned char buffer[16];
+	int i_offset;
+
+	memset(buffer, 0, sizeof(buffer));
+
+	i_offset = 0x1020;
+	if (flash_mtd_read(MTD_PART_NAME_FACTORY, i_offset, buffer, 6) < 0) {			//strlen("erased") == 6
+		puts("Unable to read erased mark from EEPROM!");
+		return -1;
+	}
+
+	if(memcmp(buffer, "erased", 6) != 0) {
+		puts("have not erased nvram!");
+		return -2;
+	}
+
+	return 0;
+}
+
+int ate_write_id2(void)
+{
+	unsigned char buffer[16] = {0};
+	int i_offset;
+
+	if(ate_read_id2() == 0) return 0;
+
+	memcpy(buffer, "erased", 6);
+
+	i_offset = 0x1020;
+
+	if (flash_mtd_write(MTD_PART_NAME_FACTORY, i_offset, buffer, 6) != 0) {
+		puts("Unable to write erased mark to EEPROM!");
+		return -1;
+	}
+
+	return 0;
+}
+
+static int ate_erase_id2(void)
+{
+	unsigned char buffer[16];
+	int i_offset;
+	int i;
+
+	memset(buffer, 0, sizeof(buffer));
+
+	for(i = 0; i < 16; i++) {
+		buffer[i] = 255;
+	}
+
+	i_offset = 0x1020;
+
+	if (flash_mtd_write(MTD_PART_NAME_FACTORY, i_offset, buffer, 6) != 0) {
+		puts("Unable to clean erased mark of EEPROM!");
+		return -1;
+	}
+
+	return 0;
+}
+
 int guest_id_main(int argc, char *argv[])
 {
 	if(argv[1] == NULL) return -1;
@@ -322,6 +385,15 @@ int guest_id_main(int argc, char *argv[])
 	} 
 	else if(!strcmp(argv[1], "erase")) {
 		return ate_erase_id();
+	}
+	else if(!strcmp(argv[1], "read2")) {
+		return ate_read_id2();
+	}
+	else if(!strcmp(argv[1], "write2")) {
+		return ate_write_id2();
+	} 
+	else if(!strcmp(argv[1], "erase2")) {
+		return ate_erase_id2();
 	} else {
 		return -2;
 	}

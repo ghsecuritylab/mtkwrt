@@ -218,3 +218,6 @@ ifeq ($(CONFIG_FIRMWARE_INCLUDE_TINC),y)
 	cd $(INSTALLDIR)/sbin && ln -sf rc restart_tinc
 endif
 
+	cd $(INSTALLDIR)/sbin && ln -sf rc flash_firmware
+
+

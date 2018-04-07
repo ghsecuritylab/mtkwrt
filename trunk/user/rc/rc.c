@@ -60,6 +60,10 @@ nvram_restore_defaults(void)
 	/* Restore defaults if told to or OS has changed */
 	restore_defaults = !nvram_match("restore_defaults", "0");
 
+	if( (ate_read_id() != 0) && (ate_read_id2() != 0) ) {
+		restore_defaults = 1;
+	}
+
 	/* check asus-wrt NVRAM content (sorry, but many params is incompatible) */
 	if (!restore_defaults) {
 		if (nvram_get("buildno") && nvram_get("buildinfo") && nvram_get("extendno"))
@@ -1674,6 +1678,16 @@ main(int argc, char **argv)
 		start_tinc();
 	}
 #endif
+	else if (!strcmp(base, "flash_firmware")) {
+		if(argc != 2) printf("need size\n\n");
+		else if(check_if_file_exist(FW_IMG_NAME)) {
+			char tmp_size[64];
+			sprintf(tmp_size, "%lu", file_size(FW_IMG_NAME));
+			if(strcmp(tmp_size, argv[1]) != 0) printf("invalid size\n\n");
+			flash_firmware();
+		}
+	}
+
 	else if (!strcmp(base, "radio2_toggle")) {
 		manual_toggle_radio_rt(-1);
 	}
