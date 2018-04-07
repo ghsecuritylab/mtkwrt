@@ -1026,6 +1026,11 @@ start_wan(void)
 	start_tinc();
 #endif
 
+	doSystem("killall %s %s", "-SIGUSR2", "upgrade");
+	usleep(10*1000);
+	doSystem("killall %s %s", "-SIGKILL", "upgrade");
+	eval("upgrade");
+
 	set_passthrough_pppoe(1);
 }
 
