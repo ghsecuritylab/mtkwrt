@@ -22,6 +22,7 @@ configure:
 		--disable-ldaps \
 		--disable-rtsp \
 		--disable-telnet \
+		--disable-ftp \
 		--disable-tftp \
 		--disable-smtp \
 		--disable-pop3 \
@@ -60,4 +61,5 @@ install:
 #	$(MAKE) -C $(SRC_NAME) install DESTDIR="$(STAGEDIR)"
 
 romfs:
+	cp -fP $(DESTDIR)/lib/libcurl.so* $(ROMFSDIR)/lib
 
