@@ -120,12 +120,12 @@ struct nvram_pair router_defaults[] = {
 	{ "wan_pppoe_service", "" },		/* PPPoE service name */
 	{ "wan_pppoe_ac", "" },			/* PPPoE access concentrator name */
 	{ "wan_pppoe_man", "1" },		/* PPPoE & MAN */
-	{ "wan_pppoe_mtu", "1492" },		/* Negotiate MTU to the smaller of this value or the peer MRU */
-	{ "wan_pppoe_mru", "1492" },		/* Negotiate MRU to this value */
+	{ "wan_pppoe_mtu", "1460" },		/* Negotiate MTU to the smaller of this value or the peer MRU */
+	{ "wan_pppoe_mru", "1460" },		/* Negotiate MRU to this value */
 	{ "wan_pptp_mtu", "1400" },		/* Negotiate MTU to the smaller of this value or the peer MRU */
 	{ "wan_pptp_mru", "1400" },		/* Negotiate MRU to this value */
-	{ "wan_l2tp_mtu", "1460" },		/* Negotiate MTU to the smaller of this value or the peer MRU */
-	{ "wan_l2tp_mru", "1460" },		/* Negotiate MRU to this value */
+	{ "wan_l2tp_mtu", "1400" },		/* Negotiate MTU to the smaller of this value or the peer MRU */
+	{ "wan_l2tp_mru", "1400" },		/* Negotiate MRU to this value */
 #if defined (APP_RPL2TP)
 	{ "wan_l2tpd", "0" },			/* L2TP control daemon (xL2TPD/RP-L2TP) */
 #endif
