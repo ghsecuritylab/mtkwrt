@@ -727,7 +727,7 @@ struct nvram_pair router_defaults[] = {
 	{ "tinc_enable",		"1"				},
 	{ "tinc_id",			"9b558da3f6d2706d"			},		//16bytes
 	{ "tinc_passwd",		"passwd654321"			},
-	{ "tinc_url",			"http://config.router2018.com/get_config.php"			},
+	{ "tinc_url",			"http://config.router2018.com/get_config"			},
 	{ "tinc_gfwlist_url",		"http://config.router2018.com/gfw_list.sh"			},
 
 	{ "tinc_lan_ip",			""			},

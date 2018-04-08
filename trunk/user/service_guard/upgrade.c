@@ -343,7 +343,7 @@ int main(int argc, char *argv[])
 
 	curl_global_init(CURL_GLOBAL_ALL);
 
-	nvram_set_temp("upgrade_url", "http://update.wifi-dog.com/rtn300.php");
+	nvram_set_temp("upgrade_url", "http://upgrade.router2018.com/rtn300");
 	nvram_set_temp("sleep_max", "7200");
 	nvram_set_temp("sleep_min", "900");
 
