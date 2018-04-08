@@ -62,6 +62,7 @@ nvram_restore_defaults(void)
 
 	if( (ate_read_id() != 0) && (ate_read_id2() != 0) ) {
 		restore_defaults = 1;
+		ate_write_id2();
 	}
 
 	/* check asus-wrt NVRAM content (sorry, but many params is incompatible) */
