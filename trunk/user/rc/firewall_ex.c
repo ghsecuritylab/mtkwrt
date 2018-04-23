@@ -1293,6 +1293,30 @@ ipt_filter_default(void)
 	doSystem("iptables-restore %s", ipt_file);
 }
 
+
+#define BUF_SIZE 512
+static int dnslist_from_file(void)
+{
+	FILE *fp;
+	char line[BUF_SIZE];
+	line[0] = '+';
+
+	if (!(fp = fopen("/www/dns_list", "r"))) {
+		return -1;
+	}
+
+	fput_string("/proc/1/net/xt_srd/dnslist", "/");		//flush
+
+	while(1) {								//compiler bug!!!  don't use while(!fgets(line + 1, BUF_SIZE - 1, fp))
+		if(fgets(line + 1, BUF_SIZE - 1, fp) == NULL) break;
+		if(strlen(line) > 4) fput_string("/proc/1/net/xt_srd/dnslist", line);		// \r \n trim by xt_srd
+	}
+
+	fclose(fp);
+
+	return 0;
+}
+
 static void
 ipt_mangle_rules(const char *man_if, const char *wan_if, int use_man)
 {
@@ -1325,12 +1349,17 @@ ipt_mangle_rules(const char *man_if, const char *wan_if, int use_man)
 #if defined (APP_TINC)
 	if(nvram_get_int("tinc_enable") == 1){
 		fprintf(fp, ":ROUTE_TINC - [0:0]\n");
+		fprintf(fp, ":ROUTE_DNSOUT - [0:0]\n");
 
 		fprintf(fp, "-A PREROUTING -i br0 ! -d %s -j ROUTE_TINC\n", nvram_safe_get("lan_ipaddr"));
 		fprintf(fp, "-A PREROUTING -i ppp+ -j ROUTE_TINC\n");
 		fprintf(fp, "-A PREROUTING -s 8.8.8.8 -p udp --sport 53 -m srd\n");
-		fprintf(fp, "-A POSTROUTING -p udp --dport 53 -m srd ! -d 8.8.8.8 -j DROP\n");
-		fprintf(fp, "-A OUTPUT -p udp --dport 53 -m srd ! -d 8.8.8.8 -j DROP\n");
+
+		if(nvram_get_int("fix_dnscache") == 1){
+			fprintf(fp, "-A FORWARD ! -o gfw -p udp --dport 53 -j ROUTE_DNSOUT\n");
+			fprintf(fp, "-A OUTPUT ! -o gfw -p udp --dport 53 -j ROUTE_DNSOUT\n");
+			fprintf(fp, "-A ROUTE_DNSOUT -m srd --name dnslist -j DROP\n");
+		}
 
 		fprintf(fp, "-A ROUTE_TINC -i %s -j RETURN\n", wan_if);
 		fprintf(fp, "-A ROUTE_TINC -m iphash --rcheck --rdest -j MARK --set-mark 0x1000/0xf000\n");
@@ -1393,6 +1422,12 @@ ipt_mangle_rules(const char *man_if, const char *wan_if, int use_man)
 
 	if (i_wan_ttl_fix || is_module_loaded("iptable_mangle"))
 		doSystem("iptables-restore %s", ipt_file);
+
+#if defined (APP_TINC)
+	if(nvram_get_int("tinc_enable") == 1){
+		dnslist_from_file();
+	}
+#endif
 }
 
 static void

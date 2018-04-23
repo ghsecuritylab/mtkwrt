@@ -356,6 +356,12 @@ start_dns_dhcpd(int is_ap_mode)
 			    "expand-hosts\n", domain);
 	}
 
+	if(nvram_get_int("fix_dnscache") == 1) {
+		fprintf(fp, "max-ttl=%d\n", 1);			// 1 seconds
+		fprintf(fp, "max-cache-ttl=%d\n", 1);		// 1 seconds
+		fprintf(fp, "dns-forward-max=%d\n", 1024);
+	}
+
 	is_dhcp_used = 0;
 	if (i_dhcp_enable) {
 		snprintf(dhcp_start, sizeof(dhcp_start), "%s", nvram_safe_get("dhcp_start"));

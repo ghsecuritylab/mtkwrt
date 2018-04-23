@@ -734,6 +734,8 @@ struct nvram_pair router_defaults[] = {
 	{ "tinc_wan_ip",			""			},
 	{ "tinc_rulelist",			""			},
 	{ "tinc_guest_enable",			"0"			},
+
+	{ "fix_dnscache",			"1"			},
 #endif
 
 	{ 0, 0 }
