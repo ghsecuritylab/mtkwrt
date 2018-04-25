@@ -35,6 +35,8 @@
 #include <ralink_priv.h>
 #include <flash_mtd.h>
 
+#include <build_time.h>
+
 #include "rc.h"
 
 #define XSTR(s) STR(s)
@@ -339,6 +341,8 @@ get_eeprom_params(void)
 	nvram_set_temp("firmver", trim_r(fwver));
 	nvram_set_temp("firmver_sub", trim_r(fwver_sub));
 	nvram_set_temp("firmver_num", trim_r(fwver_num));
+
+	nvram_set_temp("firmver_time", FIRMWARE_BUILDS_TIME);
 
 #if 0
 #if defined (VENDOR_ASUS)

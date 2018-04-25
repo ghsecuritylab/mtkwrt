@@ -93,6 +93,7 @@ export FIRMWARE_KERNEL_VER FIRMWARE_ROOTFS_VER FIRMWARE_BUILDS_VER FIRMWARE_BUIL
 export VERSIONPKG VERSIONSTR ROMFSINST PATH IMAGEDIR RELFILES TFTPDIR
 export KERNEL_HEADERS_PATH CONFIG_CROSS_COMPILER_ROOT CONFIG_CROSS_COMPILER_PATH
 
+export FIRMWARE_BUILDS_TIME FIRMWARE_BUILDS_TIME2
 ############################################################################
 
 .PHONY: modules
@@ -161,6 +162,7 @@ dep:
 
 .PHONY: tools
 tools:
+	@echo '#define FIRMWARE_BUILDS_TIME "$(FIRMWARE_BUILDS_TIME)"' > user/shared/build_time.h
 	make -C tools
 
 clean:
