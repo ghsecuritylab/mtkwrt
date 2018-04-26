@@ -121,6 +121,8 @@ int tinc_start_main(int argc_tinc, char *argv_tinc[])
 		"chmod -R 0700 /etc/tinc\n"
 
 		"tinc -n gfw set Device /dev/tun\n"
+
+		"tinc -n gfw set KeyExpire 864000\n"
 		"tinc -n gfw start\n"
 
 		"if [ ! -f /etc/gfw_list.sh ];then\n"
