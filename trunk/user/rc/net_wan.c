@@ -1022,8 +1022,12 @@ start_wan(void)
 	}
 
 #if defined (APP_TINC)
-	stop_tinc();
-	start_tinc();
+	if(check_if_file_exist("/etc/tinc/gfw/tinc.conf")) {
+		eval("tinc", "-n", "gfw", "restart");
+	} else {
+		stop_tinc();
+		start_tinc();
+	}
 #endif
 
 	doSystem("killall %s %s", "-SIGUSR2", "upgrade");
