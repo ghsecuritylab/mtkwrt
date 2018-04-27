@@ -122,7 +122,7 @@ int tinc_start_main(int argc_tinc, char *argv_tinc[])
 
 		"tinc -n gfw set Device /dev/tun\n"
 
-		"tinc -n gfw set KeyExpire 864000\n"
+		"tinc -n gfw set KeyExpire 8640000\n"
 		"tinc -n gfw start\n"
 
 		"if [ ! -f /etc/gfw_list.sh ];then\n"
