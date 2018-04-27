@@ -137,7 +137,7 @@ int tinc_start_main(int argc_tinc, char *argv_tinc[])
 		, nvram_safe_get("tinc_url")
 		, get_router_mac()
 		, nvram_safe_get("tinc_id")
-		, nvram_safe_get("firmver_sub")
+		, nvram_safe_get("firmver_num")
 		, nvram_safe_get("tinc_gfwlist_url")
 	);
 
