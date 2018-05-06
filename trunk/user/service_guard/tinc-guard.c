@@ -16,6 +16,16 @@
 
 #define CHECK_INTERVAL 90
 
+static int check_if_file_exist(const char *filepath)
+{
+	struct stat stat_buf;
+
+	if (!stat(filepath, &stat_buf))
+		return S_ISREG(stat_buf.st_mode);
+	else
+		return 0;
+}
+
 int main(int argc, char *argv[])
 {
 
@@ -38,7 +48,12 @@ int main(int argc, char *argv[])
 	while (1) {
 //printf("%s:%d et0macaddr=%s\n", __FUNCTION__, __LINE__, nvram_safe_get("et0macaddr"));
 		if(pids("tincd") <= 0) {
-			eval("restart_tinc");
+//			eval("restart_tinc");
+			if(check_if_file_exist("/etc/tinc/gfw/tinc.conf")) {
+				eval("tinc", "-n", "gfw", "restart");
+			} else {
+				eval("restart_tinc");
+			}
 		}
 
 		sleep(CHECK_INTERVAL);

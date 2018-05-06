@@ -238,6 +238,7 @@ printf("%s %d: 11111111\n", __FUNCTION__, __LINE__);
 		"action=%d\n"
 		"if [ $action -eq 1 ];then\n"
 			"nvram settmp upgrade_code=1\n"
+			"logger upgrade start\n"
 			"flash_firmware %d\n"
 		"fi\n"
 
@@ -294,6 +295,9 @@ static void check_upgrade(void)
 	while (1) {
 		sleep(sleep_seconds);
 
+		sleep_seconds = get_sleep_seconds();
+		syslog(LOG_INFO, "sleep_seconds=%d\n", sleep_seconds);
+
 //1. make upgrade_url
 		if(make_upgrade_url(upgrade_url) != 0) continue;
 printf("upgrade_url=%s\n", upgrade_url);
@@ -320,9 +324,6 @@ printf("upgrade_url=%s\n", upgrade_url);
 //5. release
 		json_object_put(response_obj);
 		free(M.memory);
-
-		sleep_seconds = get_sleep_seconds();
-		syslog(LOG_INFO, "sleep_seconds=%d\n", sleep_seconds);
 	}
 
 }
