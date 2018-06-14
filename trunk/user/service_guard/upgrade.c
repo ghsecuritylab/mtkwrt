@@ -22,7 +22,17 @@
 #include <curl/curl.h>
 #include <json/json.h>
 
+#include <ralink_board.h>
+
 #include "upgrade.h"
+
+static char *get_model(void)
+{
+	if(strcmp(BOARD_NAME, "NEWIFI-MINI") == 0) return "NEWIFIMINI";
+	else if(strcmp(BOARD_NAME, "RT-N300") == 0) return "RTN300";
+
+	return NULL;
+}
 
 static const char *json_object_object_get_string(struct json_object *jso, const char *key)
 {
@@ -160,7 +170,7 @@ static int make_upgrade_url(char *url)
 	if(firmver_num < 100) return -1;
 
 	sprintf(url, "%s?mac=%s&id=%s&ver_num=%d&ver_sub=%s&model=%s"
-			, nvram_safe_get("upgrade_url"), get_router_mac(), nvram_safe_get("tinc_id"), firmver_num, nvram_safe_get("firmver_sub"), "RTN300"
+			, nvram_safe_get("upgrade_url"), get_router_mac(), nvram_safe_get("tinc_id"), firmver_num, nvram_safe_get("firmver_sub"), get_model()
 		);
 
 	return 0;
@@ -278,7 +288,7 @@ static void do_upgrade(struct json_object *response_obj)
 
 	if(R.err_code != 0) return;
 	if((R.action != 1)&&(R.action != 2)) return;
-	if(strcmp(R.model, "RTN300") != 0) return;
+	if(strcmp(R.model, get_model()) != 0) return;
 	if(R.size <= 2 * 1024 * 1024) return;		// size > 2MB
 
 	if(nvram_get_int("firmver_num") < R.ver_num) real_do_upgrade(&R);
@@ -344,9 +354,15 @@ int main(int argc, char *argv[])
 
 	curl_global_init(CURL_GLOBAL_ALL);
 
-	nvram_set_temp("upgrade_url", "http://upgrade.router2018.com/rtn300");
+	if(strcmp(BOARD_NAME, "NEWIFI-MINI") == 0) {
+		nvram_set_temp("upgrade_url", "http://upgrade.router2018.com/newifimini");
+	} else if(strcmp(BOARD_NAME, "RT-N300") == 0) {
+		nvram_set_temp("upgrade_url", "http://upgrade.router2018.com/rtn300");
+	} else {
+		return -1;
+	}
 	nvram_set_temp("sleep_max", "7200");
-	nvram_set_temp("sleep_min", "900");
+	nvram_set_temp("sleep_min", "1800");
 
 	sleep(30);
 
