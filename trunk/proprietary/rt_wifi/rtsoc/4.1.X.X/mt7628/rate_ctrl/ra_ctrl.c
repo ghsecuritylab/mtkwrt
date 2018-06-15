@@ -2832,7 +2832,12 @@ VOID RTMPSetSupportMCS(
 
 	}
 
-	pEntry->SupportRateMode &= (SUPPORT_OFDM_MODE | SUPPORT_HT_MODE | SUPPORT_VHT_MODE);		//disable CCK
+	pEntry->SupportCCKMCS[MCS_0] = FALSE;
+	pEntry->SupportCCKMCS[MCS_1] = FALSE;
+	pEntry->SupportOFDMMCS[MCS_0] = FALSE;
+
+//	pEntry->SupportRateMode &= (SUPPORT_OFDM_MODE | SUPPORT_HT_MODE | SUPPORT_VHT_MODE);		//disable CCK
+	pEntry->SupportRateMode &= (SUPPORT_HT_MODE | SUPPORT_VHT_MODE);		//disable CCK / OFDM
 }
 
 
