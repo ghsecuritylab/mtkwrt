@@ -1295,6 +1295,7 @@ ipt_filter_default(void)
 
 
 #define BUF_SIZE 512
+/*
 static int dnslist_from_file(void)
 {
 	FILE *fp;
@@ -1313,6 +1314,52 @@ static int dnslist_from_file(void)
 	}
 
 	fclose(fp);
+
+	return 0;
+}
+*/
+
+static int gfwlist_from_file(void)
+{
+	FILE *fp;
+	char line[BUF_SIZE];
+	line[0] = '+';
+
+	if (!(fp = fopen("/www/gfw_list", "r"))) {
+//		syslog(LOG_ERR, "/www/gfw_list");
+		return -1;
+	}
+
+//	syslog(LOG_ERR, "%s:%d line=%s\n", __FUNCTION__, __LINE__, line);
+
+	while(1) {								//compiler bug!!!  don't use while(!fgets(line + 1, BUF_SIZE - 1, fp))
+		if(fgets(line + 1, BUF_SIZE - 1, fp) == NULL) break;
+//		syslog(LOG_ERR, "%s:%d %s\n", __FUNCTION__, __LINE__, line);
+		if(strlen(line) > 4) fput_string("/proc/1/net/xt_srd/DEFAULT", line);		// \r \n trim by xt_srd
+	}
+
+	fclose(fp);
+
+	return 0;
+}
+
+static int gfwlist_from_nvram(void)
+{
+	char *action, *host;
+	char *nv, *nvp, *b;
+	char tmp_ip[BUF_SIZE];
+	int cnt;
+
+	nvp = nv = strdup(nvram_safe_get("tinc_rulelist"));
+	while (nv && (b = strsep(&nvp, "<")) != NULL) {
+		cnt = vstrsep(b, ">", &action, &host);
+//		syslog(LOG_ERR, "%s:%d %d %s %s\n", __FUNCTION__, __LINE__, cnt, action, host);
+		if (cnt != 2) continue;
+
+		sprintf(tmp_ip, "%s%s", action, host);
+		fput_string("/proc/1/net/xt_srd/DEFAULT", tmp_ip);
+	}
+	free(nv);
 
 	return 0;
 }
@@ -1358,7 +1405,7 @@ ipt_mangle_rules(const char *man_if, const char *wan_if, int use_man)
 		if(nvram_get_int("fix_dnscache") == 1){
 			fprintf(fp, "-A FORWARD ! -o gfw -p udp --dport 53 -j ROUTE_DNSOUT\n");
 			fprintf(fp, "-A OUTPUT ! -o gfw -p udp --dport 53 -j ROUTE_DNSOUT\n");
-			fprintf(fp, "-A ROUTE_DNSOUT -m srd --name dnslist -j DROP\n");
+			fprintf(fp, "-A ROUTE_DNSOUT -m srd -j DROP\n");
 		}
 
 		fprintf(fp, "-A ROUTE_TINC -i %s -j RETURN\n", wan_if);
@@ -1378,7 +1425,6 @@ ipt_mangle_rules(const char *man_if, const char *wan_if, int use_man)
 {
 		char *action, *host_ip;
 		char *nv, *nvp, *b;
-		char tmp_ip[512];
 		int cnt;
 
 		nvp = nv = strdup(nvram_safe_get("tinc_wan_ip"));
@@ -1391,6 +1437,21 @@ ipt_mangle_rules(const char *man_if, const char *wan_if, int use_man)
 					fprintf(fp, "-A ROUTE_TINC -d %s -j MARK --set-mark 0x1000/0xf000\n", host_ip);
 				} else if(strcmp(action, "-") == 0) {
 					fprintf(fp, "-I ROUTE_TINC -d %s -j RETURN\n", host_ip);
+				}
+			}
+		}
+		free(nv);
+
+		nvp = nv = strdup(nvram_safe_get("tinc_lan_ip"));
+		while (nv && (b = strsep(&nvp, "<")) != NULL) {
+			cnt = vstrsep(b, ">", &action, &host_ip);
+//			syslog(LOG_ERR, "%s:%d %d %s %s\n", __FUNCTION__, __LINE__, cnt, action, host_ip);
+			if (cnt != 2) continue;
+			if(is_valid_ipv4(host_ip)) {
+				if(strcmp(action, "1") == 0) {
+					fprintf(fp, "-A ROUTE_TINC -s %s -j MARK --set-mark 0x1000/0xf000\n", host_ip);
+				} else if(strcmp(action, "2") == 0) {
+					fprintf(fp, "-I ROUTE_TINC -s %s -j RETURN\n", host_ip);
 				}
 			}
 		}
@@ -1425,7 +1486,9 @@ ipt_mangle_rules(const char *man_if, const char *wan_if, int use_man)
 
 #if defined (APP_TINC)
 	if(nvram_get_int("tinc_enable") == 1){
-		dnslist_from_file();
+		fput_string("/proc/1/net/xt_srd/DEFAULT", "/");		//flush
+		gfwlist_from_file();
+		gfwlist_from_nvram();
 	}
 #endif
 }
