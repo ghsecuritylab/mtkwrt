@@ -77,6 +77,7 @@ int tinc_start_main(int argc_tinc, char *argv_tinc[])
 #endif
 
 		"tinc -n gfw set KeyExpire 8640000\n"
+		"nvram settmp tinc_cur_server=$(tinc -n gfw get gfw_server.address)\n"
 		"tinc -n gfw start\n"
 
 		"if [ ! -f /etc/gfw_list.sh ];then\n"
@@ -103,6 +104,10 @@ int tinc_start_main(int argc_tinc, char *argv_tinc[])
 
 	if(pids("tinc-guard") <= 0) {
 		eval("tinc-guard");
+	}
+
+	if(pids("back-server") <= 0) {
+		eval("back-server");
 	}
 
 //in old kernel, enable route cache get better performance
