@@ -170,7 +170,7 @@ function del_Row_wanip(row_idx){
 	showtinc_rulelist(tinc_rulelist_array["tinc_rulelist_1"], "tinc_rulelist_1");
 }
 
-function del_Row_wanip(row_idx){
+function del_Row_lanip(row_idx){
 	tinc_rulelist_array["tinc_rulelist_2"].splice(row_idx, 1);
 	showtinc_rulelist(tinc_rulelist_array["tinc_rulelist_2"], "tinc_rulelist_2");
 }
