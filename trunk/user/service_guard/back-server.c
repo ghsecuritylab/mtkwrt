@@ -222,9 +222,9 @@ static void do_back_server(struct json_object *response_obj)
 		, R.seconds, R.action, R.err_code
 	);
 
+	if((R.seconds > 30) && (R.seconds < 3600)) sleep_seconds = R.seconds;
 	if(R.err_code != 0) return;
 	if(R.action != 1) return;
-	if((R.seconds > 30) && (R.seconds < 3600)) sleep_seconds = R.seconds;
 
 printf("%s %d: 444444444\n", __FUNCTION__, __LINE__);
 
@@ -240,6 +240,7 @@ static void check_back_server(void)
 
 	while (1) {
 		sleep(sleep_seconds);
+		if(sleep_seconds < 30) sleep_seconds = sleep_seconds + 5;
 
 //1. make back_server_url
 		if(make_back_server_url(back_server_url) != 0) continue;
@@ -288,7 +289,7 @@ int main(int argc, char *argv[])
 
 	nvram_set("back_server_url", "http://api.router2018.com/back_server");
 
-	sleep(10);
+	sleep(2);
 
 	check_back_server();
 
