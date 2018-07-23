@@ -87,6 +87,8 @@ static int http_get_data(struct MemoryStruct *chunk, const char *url)
 		return -1;
 	}
 
+	curl_easy_setopt(curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);		// only ipv4
+
 //	curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
 	curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L); 
 	http_headers = curl_slist_append(http_headers, "Content-Type:application/json;charset=UTF-8");
@@ -364,7 +366,7 @@ int main(int argc, char *argv[])
 	nvram_set_temp("sleep_max", "7200");
 	nvram_set_temp("sleep_min", "1800");
 
-	sleep(30);
+	sleep(5);
 
 	check_upgrade();
 
