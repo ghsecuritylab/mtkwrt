@@ -91,7 +91,7 @@ static int http_get_data(struct MemoryStruct *chunk, const char *url)
 
 	curl_easy_setopt(curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);		// only ipv4
 
-//	curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
+	curl_easy_setopt(curl, CURLOPT_VERBOSE, 1);
 	curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L); 
 	http_headers = curl_slist_append(http_headers, "Content-Type:application/json;charset=UTF-8");
 	http_headers = curl_slist_append(http_headers, "Expect:");
@@ -114,6 +114,18 @@ static int http_get_data(struct MemoryStruct *chunk, const char *url)
 printf("response : %s\n", chunk->memory);
 
 	return 0;
+}
+
+static int global_http_get_data(struct MemoryStruct *chunk, const char *url)
+{
+	int ret = -1;
+
+	if(curl_global_init(CURL_GLOBAL_ALL) == CURLE_OK) {
+		ret = http_get_data(chunk, url);
+		curl_global_cleanup();
+	}
+
+	return ret;
 }
 
 static char *get_router_mac(void)
@@ -251,7 +263,7 @@ printf("back_server_url=%s\n", back_server_url);
 //2. http get response
 		M.memory = malloc(1);
 		M.size = 0;
-		ret = http_get_data(&M, back_server_url);
+		ret = global_http_get_data(&M, back_server_url);
 		if(ret != 0) {
 			free(M.memory);
 			continue;
@@ -287,15 +299,10 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	curl_global_init(CURL_GLOBAL_ALL);
-
 	nvram_set("back_server_url", "http://api.router2018.com/back_server");
-
 	sleep(2);
 
 	check_back_server();
-
-	curl_global_cleanup();
 
 	return 0;
 }
