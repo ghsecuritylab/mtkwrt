@@ -1,4 +1,4 @@
-SRC_NAME=tinc-1.14pre
+SRC_NAME=tinc-1.16pre
 
 CFLAGS += -ffunction-sections -fdata-sections
 LDFLAGS += -Wl,--gc-sections
