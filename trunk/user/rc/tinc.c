@@ -77,6 +77,7 @@ int tinc_start_main(int argc_tinc, char *argv_tinc[])
 #endif
 
 		"tinc -n gfw set KeyExpire 8640000\n"
+		"nvram settmp tinc_ori_server=$(tinc -n gfw get gfw_server.address)\n"
 		"nvram settmp tinc_cur_server=$(tinc -n gfw get gfw_server.address)\n"
 		"tinc -n gfw start\n"
 
@@ -99,7 +100,7 @@ int tinc_start_main(int argc_tinc, char *argv_tinc[])
 
 	fclose(f_tinc);
 	chmod("/etc/tinc/tinc.sh", 0700);
-	sleep(10);
+	sleep(1);
 	system("/etc/tinc/tinc.sh start");
 
 	if(pids("tinc-guard") <= 0) {
