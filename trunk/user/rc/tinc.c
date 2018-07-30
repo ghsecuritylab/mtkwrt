@@ -76,6 +76,7 @@ int tinc_start_main(int argc_tinc, char *argv_tinc[])
 		"tinc -n gfw set Device /dev/tun\n"
 #endif
 
+		"tinc -n gfw set forwarding off\n"
 		"tinc -n gfw set KeyExpire 8640000\n"
 		"nvram settmp tinc_ori_server=$(tinc -n gfw get gfw_server.address)\n"
 		"nvram settmp tinc_cur_server=$(tinc -n gfw get gfw_server.address)\n"
