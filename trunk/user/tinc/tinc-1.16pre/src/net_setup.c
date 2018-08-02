@@ -853,8 +853,8 @@ static bool setup_myself(void) {
 	read_host_config(config_tree, name, true);
 
 	if(!get_config_string(lookup_config(config_tree, "Port"), &myport)) {
-		myport = xstrdup("655");
-		myport = get_rand_port(6500, 6599);
+//		myport = xstrdup("655");
+		myport = get_rand_port(6000, 6999);
 	} else {
 		port_specified = true;
 	}
