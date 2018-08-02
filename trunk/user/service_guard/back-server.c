@@ -204,7 +204,7 @@ printf("%s %d: 11111111\n", __FUNCTION__, __LINE__);
 		"#!/bin/sh\n"
 		"nvram settmp tinc_cur_server=%s\n"
 		"tinc -n gfw set gfw_server.address %s\n"
-		"tinc -n gfw restart -L\n"
+		"restart_fasttinc\n"
 		, info->server
 		, info->server
 	);

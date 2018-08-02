@@ -10,7 +10,7 @@ CFLAGS += -Wall -I. -I$(SHDIR) -I$(SHDIR)/include -I$(ROOTDIR)/$(LINUXDIR)/inclu
 LDFLAGS += -L$(SHDIR) -lshared -L$(STAGEDIR)/lib -lcurl -ljson-c -lrt -lcrypto -lssl -lz
 
 
-OBJS_TINC = tinc-guard.o
+OBJS_TINC = ping.o tinc-guard.o
 OBJS_UPGRADE = upgrade.o
 OBJS_BACK= back-server.o
 OBJS = $(OBJS_TINC) $(OBJS_UPGRADE) $(OBJS_BACK)
