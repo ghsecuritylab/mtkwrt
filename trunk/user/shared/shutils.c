@@ -530,6 +530,133 @@ kill_pidfile(char *pidfile)
 	return kill_pidfile_s(pidfile, SIGTERM);
 }
 
+static int f_read(const char *path, void *buffer, int max)
+{
+	int f;
+	int n;
+
+	if ((f = open(path, O_RDONLY)) < 0) return -1;
+	n = read(f, buffer, max);
+	close(f);
+	return n;
+}
+
+int f_read_string(const char *path, char *buffer, int max)
+{
+	if (max <= 0) return -1;
+	int n = f_read(path, buffer, max - 1);
+	buffer[(n > 0) ? n : 0] = 0;
+	return n;
+}
+
+char *psname(int pid, char *buffer, int maxlen)
+{
+	char buf[512];
+	char path[64];
+	char *p;
+	int fn = 0;
+
+	if (maxlen <= 0) return NULL;
+	*buffer = 0;
+	sprintf(path, "/proc/%d/stat", pid);
+	if (((fn=f_read_string(path, buf, sizeof(buf))) > 4) && ((p = strrchr(buf, ')')) != NULL)) {
+		*p = 0;
+		if (((p = strchr(buf, '(')) != NULL) && (atoi(buf) == pid)) {
+			strlcpy(buffer, p + 1, maxlen);
+		}
+	}
+	return fn <= 0 ? "" : buffer;
+}
+
+static int _pidof(const char *name, pid_t **pids)
+{
+	const char *p;
+	char *e;
+	DIR *dir;
+	struct dirent *de;
+	pid_t i;
+	int count;
+	char buf[256];
+
+	count = 0;
+	if (pids != NULL)
+		*pids = NULL;
+	if ((p = strrchr(name, '/')) != NULL) name = p + 1;
+	if ((dir = opendir("/proc")) != NULL) {
+		while ((de = readdir(dir)) != NULL) {
+			i = strtol(de->d_name, &e, 10);
+			if (*e != 0) continue;
+			if (strcmp(name, psname(i, buf, sizeof(buf))) == 0) {
+				if (pids == NULL) {
+					count = i;
+					break;
+				}
+				if ((*pids = realloc(*pids, sizeof(pid_t) * (count + 1))) == NULL) {
+					return -1;
+				}
+				(*pids)[count++] = i;
+			}
+		}
+	}
+	closedir(dir);
+	return count;
+}
+
+int pidof(const char *name)
+{
+	pid_t p;
+
+	p = _pidof(name, NULL);
+	if (p < 1) {
+		usleep(10 * 1000);
+		p = _pidof(name, NULL);
+		if (p < 1)
+			p = _pidof(name, NULL);
+	}
+	if (p < 1)
+		return -1;
+	return p;
+}
+
+int killall(const char *name, int sig)
+{
+	pid_t *pids;
+	int i;
+	int r;
+
+	if ((i = _pidof(name, &pids)) > 0) {
+		r = 0;
+		do {
+			r |= kill(pids[--i], sig);
+		} while (i > 0);
+		free(pids);
+		return r;
+	}
+	return -2;
+}
+
+void killall_tk(const char *name)
+{
+	int n;
+
+	if (killall(name, SIGTERM) == 0) {
+		n = 10;
+		while ((killall(name, 0) == 0) && (n-- > 0)) {
+//			_dprintf("%s: waiting name=%s n=%d\n", __FUNCTION__, name, n);
+			usleep(100 * 1000);
+		}
+		if (n < 0) {
+			n = 10;
+			while ((killall(name, SIGKILL) == 0) && (n-- > 0)) {
+//				_dprintf("%s: SIGKILL name=%s n=%d\n", __FUNCTION__, name, n);
+				usleep(100 * 1000);
+			}
+		}
+	}
+}
+
+//-----------------------------------------------------------------------------------------------------------------------
+
 /* remove space in the end of string */
 char *
 trim_r(char *str)

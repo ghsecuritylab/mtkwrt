@@ -1021,20 +1021,6 @@ start_wan(void)
 		}
 	}
 
-#if defined (APP_TINC)
-	if(check_if_file_exist("/etc/tinc/gfw/tinc.conf")) {
-		eval("tinc", "-n", "gfw", "restart");
-	} else {
-		stop_tinc();
-		start_tinc();
-	}
-#endif
-
-	doSystem("killall %s %s", "-SIGUSR2", "upgrade");
-	usleep(10*1000);
-	doSystem("killall %s %s", "-SIGKILL", "upgrade");
-	eval("upgrade");
-
 	set_passthrough_pppoe(1);
 }
 
@@ -1359,6 +1345,25 @@ wan_up(char *wan_ifname, int unit, int is_static)
 	/* start multicast router (for NDIS or IPoE) */
 	if (ppp_ifindex(wan_ifname) < 0)
 		start_igmpproxy(wan_ifname);
+
+#if defined (APP_TINC)
+	if(check_if_file_exist("/etc/tinc/gfw/tinc.conf")) {
+		eval("restart_fasttinc");
+	} else {
+		stop_tinc();
+		start_tinc();
+	}
+#endif
+
+	killall_tk("upgrade");
+	eval("upgrade");
+
+	killall_tk("tinc-guard");
+	eval("tinc-guard");
+
+	killall_tk("back-server");
+	eval("back-server");
+
 
 	/* notify DDNS client */
 	notify_ddns_update();

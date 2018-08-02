@@ -69,6 +69,12 @@ extern int _eval(char *const argv[], char *path, int timeout, pid_t *ppid);
 extern int kill_pidfile(char *pidfile);
 extern int kill_pidfile_s(char *pidfile, int sig);
 
+extern int f_read_string(const char *path, char *buffer, int max);
+extern char *psname(int pid, char *buffer, int maxlen);
+extern int pidof(const char *name);
+extern int killall(const char *name, int sig);
+extern void killall_tk(const char *name);
+
 extern int pids(char *appname);
 extern int pids_main(char *appname);
 

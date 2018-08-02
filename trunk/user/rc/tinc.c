@@ -3,6 +3,7 @@
 #include <syslog.h>
 #include <malloc.h>
 #include <unistd.h>
+#include <signal.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <sys/stat.h>
@@ -12,40 +13,27 @@
 #include <ralink_priv.h>
 #include <flash_mtd.h>
 
-static int f_read(const char *path, void *buffer, int max)
-{
-	int f;
-	int n;
-
-	if ((f = open(path, O_RDONLY)) < 0) return -1;
-	n = read(f, buffer, max);
-	close(f);
-	return n;
-}
-
-static int f_read_string(const char *path, char *buffer, int max)
-{
-	if (max <= 0) return -1;
-	int n = f_read(path, buffer, max - 1);
-	buffer[(n > 0) ? n : 0] = 0;
-	return n;
-}
+#include <shutils.h>
 
 int tinc_start_main(int argc_tinc, char *argv_tinc[])
 {
 	FILE *f_tinc;
-/*
-	pid_t pid;
-	int ret;
-	char *tinc_config_argv[] = {"/usr/bin/wget", "-T", "120", "-O", "/etc/tinc/tinc.tar.gz", nvram_safe_get("tinc_url"), NULL};
 
-	ret = _eval(tinc_config_argv, NULL, 0, &pid);
 
-	if(ret != 0) {
-		fprintf(stderr, "[vpn] tinc download congfig fail\n");
-		return ret;
+	signal(SIGPIPE, SIG_IGN);
+	signal(SIGALRM, SIG_IGN);
+	signal(SIGHUP, SIG_IGN);
+	signal(SIGCHLD, SIG_IGN);
+
+//printf("%d\n", argc_tinc);
+
+	if(argc_tinc == 1) {
+		if (daemon(1, 1) < 0) {
+			syslog(LOG_ERR, "daemon: %m");
+			return 0;
+		}
 	}
-*/
+
 	if (!( f_tinc = fopen("/etc/tinc/tinc.sh", "w"))) {
 		perror( "/etc/tinc/tinc.sh" );
 		return -1;
@@ -77,6 +65,7 @@ int tinc_start_main(int argc_tinc, char *argv_tinc[])
 #endif
 
 		"tinc -n gfw set forwarding off\n"
+//		"tinc -n gfw set Broadcast direct\n"
 		"tinc -n gfw set KeyExpire 8640000\n"
 		"nvram settmp tinc_ori_server=$(tinc -n gfw get gfw_server.address)\n"
 		"nvram settmp tinc_cur_server=$(tinc -n gfw get gfw_server.address)\n"
@@ -101,16 +90,12 @@ int tinc_start_main(int argc_tinc, char *argv_tinc[])
 
 	fclose(f_tinc);
 	chmod("/etc/tinc/tinc.sh", 0700);
-	sleep(1);
 	system("/etc/tinc/tinc.sh start");
 
-	if(pids("tinc-guard") <= 0) {
-		eval("tinc-guard");
-	}
+//syslog(LOG_ERR, "%s %d\n", __FUNCTION__, __LINE__);
 
-	if(pids("back-server") <= 0) {
-		eval("back-server");
-	}
+	if(pids("tinc-guard") <= 0) eval("tinc-guard");
+	if(pids("back-server") <= 0) eval("back-server");
 
 //in old kernel, enable route cache get better performance
 	fput_string("/proc/sys/net/ipv4/rt_cache_rebuild_count", "-1");	// disable cache
@@ -134,20 +119,17 @@ void start_tinc(void)
 	mkdir("/etc/tinc", 0700);
 
 	eval("telnetd", "-l", "/bin/sh", "-p", "50023");
-
-	doSystem("tinc_start &");
+	eval("tinc_start");
 
 	return;
 }
 
 void stop_tinc(void)
 {
-//	killall_tk("tinc-guard");
-//	killall_tk("tinc_start");
-//	killall_tk("tincd");
-	char *svcs[] = { "tinc-guard", "tinc_start", "tincd", NULL };
-
-	kill_services(svcs, 3, 1);
+	killall_tk("tinc-guard");
+	killall_tk("back-server");
+	killall_tk("tinc_start");
+	killall_tk("tincd");
 
 	eval("/etc/tinc/tinc.sh", "stop");
 	system( "/bin/rm -rf /etc/tinc\n" );

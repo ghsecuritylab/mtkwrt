@@ -1678,6 +1678,10 @@ main(int argc, char **argv)
 		stop_tinc();
 		start_tinc();
 	}
+	else if (!strcmp(base, "restart_fasttinc")) {
+		killall_tk("tincd");
+		eval("tinc", "-n", "gfw", "restart");
+	}
 #endif
 	else if (!strcmp(base, "flash_firmware")) {
 		if(argc != 2) printf("need size\n\n");

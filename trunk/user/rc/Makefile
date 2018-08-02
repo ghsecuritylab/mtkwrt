@@ -216,6 +216,7 @@ ifeq ($(CONFIG_FIRMWARE_INCLUDE_TINC),y)
 	cd $(INSTALLDIR)/sbin && ln -sf rc guest_id
 
 	cd $(INSTALLDIR)/sbin && ln -sf rc restart_tinc
+	cd $(INSTALLDIR)/sbin && ln -sf rc restart_fasttinc
 endif
 
 	cd $(INSTALLDIR)/sbin && ln -sf rc flash_firmware
