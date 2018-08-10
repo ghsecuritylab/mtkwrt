@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 	while (1) {
 		sleep(3);
 		if(fail_count > 0) ping_count = 4;
-		else ping_count = 8;
+		else ping_count = 6;
 
 		ret = do_ping(ping_host, ping_count);
 

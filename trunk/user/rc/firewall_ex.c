@@ -1398,6 +1398,8 @@ ipt_mangle_rules(const char *man_if, const char *wan_if, int use_man)
 		fprintf(fp, ":ROUTE_TINC - [0:0]\n");
 		fprintf(fp, ":ROUTE_DNSOUT - [0:0]\n");
 
+		fprintf(fp, "-A POSTROUTING -d 172.16.0.1 ! -o gfw -j DROP\n");
+
 		fprintf(fp, "-A PREROUTING -i br0 ! -d %s -j ROUTE_TINC\n", nvram_safe_get("lan_ipaddr"));
 		fprintf(fp, "-A PREROUTING -i ppp+ -j ROUTE_TINC\n");
 		fprintf(fp, "-A PREROUTING -s 8.8.8.8 -p udp --sport 53 -m srd\n");
