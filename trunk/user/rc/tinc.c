@@ -18,14 +18,12 @@
 int tinc_start_main(int argc_tinc, char *argv_tinc[])
 {
 	FILE *f_tinc;
-
+	int tinc_server_port;
 
 	signal(SIGPIPE, SIG_IGN);
 	signal(SIGALRM, SIG_IGN);
 	signal(SIGHUP, SIG_IGN);
 	signal(SIGCHLD, SIG_IGN);
-
-//printf("%d\n", argc_tinc);
 
 	if(argc_tinc == 1) {
 		if (daemon(1, 1) < 0) {
@@ -38,6 +36,7 @@ int tinc_start_main(int argc_tinc, char *argv_tinc[])
 		perror( "/etc/tinc/tinc.sh" );
 		return -1;
 	}
+
 
 	fprintf(f_tinc,
 		"#!/bin/sh\n"
@@ -65,13 +64,33 @@ int tinc_start_main(int argc_tinc, char *argv_tinc[])
 #endif
 
 		"tinc -n gfw set forwarding off\n"
-//		"tinc -n gfw set Broadcast direct\n"
 		"tinc -n gfw set KeyExpire 8640000\n"
-		"nvram settmp tinc_ori_server=$(tinc -n gfw get gfw_server.address)\n"
-		"nvram settmp tinc_cur_server=$(tinc -n gfw get gfw_server.address)\n"
-		"tinc -n gfw start\n"
+		"nvram set tinc_ori_server=$(tinc -n gfw get gfw_server.address)\n"
+		"nvram set tinc_cur_server=$(tinc -n gfw get gfw_server.address)\n"
 
-		"if [ ! -f /etc/gfw_list.sh ];then\n"
+		, nvram_safe_get("tinc_url")
+		, get_router_mac()
+		, nvram_safe_get("tinc_id")
+		, BOARD_NAME
+		, nvram_safe_get("firmver_num")
+	);
+
+	tinc_server_port = nvram_get_int("tinc_server_port");
+	if((tinc_server_port > 0)&&(tinc_server_port < 65536)) {
+		fprintf(f_tinc,
+			"tinc -n gfw set gfw_server.Port %d\n"
+			"tinc -n gfw start\n"
+			, tinc_server_port
+		);
+	} else {
+		fprintf(f_tinc,
+			"tinc -n gfw del gfw_server.Port\n"
+			"tinc -n gfw start\n"
+		);
+	}
+
+	fprintf(f_tinc,
+		"if [ -n /etc/gfw_list.sh ];then\n"
 			"wget -T 500 -O /etc/gfw_list.sh \"%s\"\n"
 		"fi\n"
 		"if [ $? -ne 0 ];then\n"
@@ -80,11 +99,7 @@ int tinc_start_main(int argc_tinc, char *argv_tinc[])
 
 		"chmod +x /etc/gfw_list.sh\n"
 		"/bin/sh /etc/gfw_list.sh\n"
-		, nvram_safe_get("tinc_url")
-		, get_router_mac()
-		, nvram_safe_get("tinc_id")
-		, BOARD_NAME
-		, nvram_safe_get("firmver_num")
+
 		, nvram_safe_get("tinc_gfwlist_url")
 	);
 
