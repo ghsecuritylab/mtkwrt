@@ -509,6 +509,9 @@ function validForm(){
 			return false;
 		}
 	}
+	
+	if(!validate_range(document.form.tinc_recon_seconds, 300, 864000))
+		return false;
 
 	return true;
 }
@@ -605,6 +608,13 @@ function validForm(){
                                             <th>设备ID</th>
                                             <td>
                                                 <input type="text" name="tinc_id" class="input" readonly="1" maxlength="32" size="32" value="<% nvram_get_x("","tinc_id"); %>" onkeypress="return is_string(this,event);"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>主动重连时间间隔（秒，默认3600）</th>
+                                            <td>
+                                                <input type="text" maxlength="6" size="6" name="tinc_recon_seconds" class="input" value="<% nvram_get_x("", "tinc_recon_seconds"); %>" onKeyPress="return is_number(this,event);">
+                                                &nbsp;<span style="color:#888;">[300..864000]</span>
                                             </td>
                                         </tr>
                                     </table>

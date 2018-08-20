@@ -465,6 +465,9 @@
 			{"tinc_id", "", NULL, EVM_RESTART_WAN},
 			{"tinc_lan_ip", "", NULL, EVM_RESTART_WAN},
 			{"tinc_wan_ip", "", NULL, EVM_RESTART_WAN},
+
+			{ "tinc_recon_seconds", "", NULL, EVM_RESTART_WAN},
+
 			{0,0,0,0}
 		};
 
