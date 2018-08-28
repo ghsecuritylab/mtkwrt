@@ -290,7 +290,7 @@ int main(int argc, char *argv[])
 	signal(SIGPIPE, SIG_IGN);
 	signal(SIGALRM, SIG_IGN);
 	signal(SIGHUP, SIG_IGN);
-//	signal(SIGCHLD, SIG_IGN);
+	signal(SIGCHLD, SIG_IGN);
 
 	if(argc == 1) {
 		if (daemon(1, 1) == -1) {
@@ -299,7 +299,6 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	nvram_set("back_server_url", "http://api.router2018.com/back_server");
 	sleep(2);
 
 	check_back_server();

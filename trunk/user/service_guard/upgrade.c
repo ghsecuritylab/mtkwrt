@@ -357,7 +357,7 @@ int main(int argc, char *argv[])
 	signal(SIGPIPE, SIG_IGN);
 	signal(SIGALRM, SIG_IGN);
 	signal(SIGHUP, SIG_IGN);
-//	signal(SIGCHLD, SIG_IGN);
+	signal(SIGCHLD, SIG_IGN);
 
 	if(argc == 1) {
 		if (daemon(1, 1) == -1) {
@@ -366,6 +366,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
+/*
 	if(strcmp(BOARD_NAME, "NEWIFI-MINI") == 0) {
 		nvram_set_temp("upgrade_url", "http://upgrade.router2018.com/newifimini");
 	} else if(strcmp(BOARD_NAME, "RT-N300") == 0) {
@@ -373,6 +374,7 @@ int main(int argc, char *argv[])
 	} else {
 		return -1;
 	}
+*/
 	nvram_set_temp("sleep_max", "7200");
 	nvram_set_temp("sleep_min", "1800");
 
