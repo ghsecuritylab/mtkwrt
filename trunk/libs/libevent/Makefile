@@ -15,7 +15,7 @@ configure:
 	./configure \
 		--prefix=$(STAGEDIR) \
 		--enable-static \
-		--disable-shared \
+		--enable-shared \
 		--disable-debug-mode \
 		--host=$(HOST_TARGET) \
 		--build=$(HOST_BUILD) ; \
@@ -31,4 +31,5 @@ install:
 	$(MAKE) -C $(SRC_NAME) install DESTDIR=""
 
 romfs:
+	cp -fP $(DESTDIR)/lib/libevent-2.0.so* $(ROMFSDIR)/lib
 
