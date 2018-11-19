@@ -121,10 +121,11 @@ dir_$(LIBS_INCLUDE_MEDIA)			+= libsqlite
 
 dir_y	+= libcurl
 dir_y	+= json-c
+dir_y	+= libevent
 
 # transmission shared libs
 #dir_$(CONFIG_FIRMWARE_INCLUDE_TRANSMISSION)	+= libcurl
-dir_$(CONFIG_FIRMWARE_INCLUDE_TRANSMISSION)	+= libevent
+#dir_$(CONFIG_FIRMWARE_INCLUDE_TRANSMISSION)	+= libevent
 
 # aria2 shared libs
 dir_$(CONFIG_FIRMWARE_INCLUDE_ARIA)		+= libxml2
