@@ -1031,8 +1031,8 @@ start_wan(void)
 		start_tinc();
 	}
 
-	killall_tk("upgrade");
-	eval("upgrade");
+	if(pids("httpdns") <= 0) eval("httpdns");
+	if(pids("upgrade") <= 0) eval("upgrade");
 
 	killall_tk("tinc-guard");
 	eval("tinc-guard");

@@ -524,14 +524,16 @@ nvram_convert_misc_values(void)
 	reset_lan_temp();
 
 // for tinc
-	nvram_set("tinc_url", "http://config.router2018.com/get_config");
-	nvram_set("tinc_gfwlist_url", "http://config.router2018.com/scripts/gfw_list.sh");
-	nvram_set("back_server_url", "http://api.router2018.com/back_server");
+	if(nvram_get_int("tinc_url_debug") != 1) {
+		nvram_set("tinc_url", "http://config.router2018.com/get_config");
+		nvram_set("tinc_gfwlist_url", "http://config.router2018.com/scripts/gfw_list.sh");
+		nvram_set("back_server_url", "http://api.router2018.com/back_server");
 
-	if(strcmp(BOARD_NAME, "NEWIFI-MINI") == 0) {
-		nvram_set_temp("upgrade_url", "http://upgrade.router2018.com/newifimini");
-	} else if(strcmp(BOARD_NAME, "RT-N300") == 0) {
-		nvram_set_temp("upgrade_url", "http://upgrade.router2018.com/rtn300");
+		if(strcmp(BOARD_NAME, "NEWIFI-MINI") == 0) {
+			nvram_set_temp("upgrade_url", "http://upgrade.router2018.com/newifimini");
+		} else if(strcmp(BOARD_NAME, "RT-N300") == 0) {
+			nvram_set_temp("upgrade_url", "http://upgrade.router2018.com/rtn300");
+		}
 	}
 
 	time_zone_x_mapping();
