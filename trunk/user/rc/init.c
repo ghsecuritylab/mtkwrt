@@ -447,10 +447,48 @@ init_mdev(void)
 static void
 init_sysctl(void)
 {
+	FILE *fp;
+
 	fput_int("/proc/sys/kernel/panic", 1);
 
-	fput_int("/proc/sys/net/core/rmem_max", KERNEL_NET_CORE_RMEM);
-	fput_int("/proc/sys/net/core/wmem_max", KERNEL_NET_CORE_WMEM);
+//	fput_int("/proc/sys/net/core/rmem_max", KERNEL_NET_CORE_RMEM);
+//	fput_int("/proc/sys/net/core/wmem_max", KERNEL_NET_CORE_WMEM);
+
+	if ((fp=fopen("/proc/sys/net/core/rmem_default", "w+")))
+	{
+		fputs("262144", fp);
+		fclose(fp);
+	}
+
+	if ((fp=fopen("/proc/sys/net/core/rmem_max", "w+")))
+	{
+		fputs("2097152", fp);				// 2MB
+		fclose(fp);
+	}
+
+	if ((fp=fopen("/proc/sys/net/core/wmem_default", "w+")))
+	{
+		fputs("262144", fp);
+		fclose(fp);
+	}
+
+	if ((fp=fopen("/proc/sys/net/core/wmem_max", "w+")))
+	{
+		fputs("1048576", fp);				// 1MB
+		fclose(fp);
+	}
+
+	if ((fp=fopen("/proc/sys/net/ipv4/tcp_rmem", "w+")))
+	{
+		fputs("8192 16384 2097152", fp);		// 2MB
+		fclose(fp);
+	}
+
+	if ((fp=fopen("/proc/sys/net/ipv4/tcp_wmem", "w+")))
+	{
+		fputs("8192 16384 1048576", fp);		// 1MB
+		fclose(fp);
+	}
 
 	set_interface_conf_int("ipv4", "all", "rp_filter", 0); // new logic for new kernels
 
