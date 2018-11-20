@@ -545,7 +545,7 @@ function validForm(){
     <input type="hidden" name="sid_list" value="tinc;">
     <input type="hidden" name="group_id" value="">
     <input type="hidden" name="action_mode" value="">
-    <input type="hidden" name="action_script" value="">
+    <input type="hidden" name="action_script" value="tinc_refresh">
 	<input type="hidden" name="tinc_rulelist" value=''>
 	<input type="hidden" name="tinc_wan_ip" value=''>
 	<input type="hidden" name="tinc_lan_ip" value=''>
@@ -578,6 +578,7 @@ function validForm(){
                                             <li class="active"><a href="javascript:void(0)" id="tab_bw_rt">基本设置</a></li>
                                         </ul>
 									</div>
+									<div class="alert alert-info" style="margin: 10px;">数据传输协议默认为自动UDP/TCP，某些对国际流量和UDP不友好的运营商环境（比如移动），强制为TCP可能连接更稳定一些。</div>
 
                                     <table width="100%" align="center" cellpadding="4" cellspacing="0" class="table table-stat">
                                         <tr>
@@ -608,6 +609,15 @@ function validForm(){
                                             <th>设备ID</th>
                                             <td>
                                                 <input type="text" name="tinc_id" class="input" readonly="1" maxlength="32" size="32" value="<% nvram_get_x("","tinc_id"); %>" onkeypress="return is_string(this,event);"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>数据传输协议</th>
+                                            <td>
+                                                <select name="tinc_data_proto" class="input">
+                                                    <option value="0" <% nvram_match_x("","tinc_data_proto", "0","selected"); %>>自动UDP/TCP</option>
+                                                    <option value="1" <% nvram_match_x("","tinc_data_proto", "1","selected"); %>>强制TCP</option>
+                                                </select>
                                             </td>
                                         </tr>
                                         <tr>

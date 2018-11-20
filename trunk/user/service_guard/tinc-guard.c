@@ -74,7 +74,13 @@ int main(int argc, char *argv[])
 
 	start_seconds = monotonic_second();
 
-	sleep(10);
+	sleep(5);
+
+	if(check_if_file_exist("/etc/tinc/gfw/tinc.conf")) {
+		eval("restart_fasttinc");
+	} else {
+		eval("restart_tinc");
+	}
 
 	tinc_recon_interval = nvram_get_int("tinc_recon_seconds");
 	if(tinc_recon_interval < 300) tinc_recon_interval = 300;
@@ -93,28 +99,28 @@ DPRINTF("stamps=%u\n", monotonic_second());
 			start_seconds = current_seconds;
 			eval("restart_fasttinc");
 
-			sleep(90);
+			sleep(60);
 		}
 
 		if(gotuser == 1) {
 			sleep(2);			// wait tincd exit
-			if(interval_seconds > 90) {
+			if(interval_seconds > 60) {
 				gotuser = 0;
 				fail_count = 0;
 				start_seconds = current_seconds;
 				eval("restart_fasttinc");
 
-				sleep(90);
+				sleep(60);
 			} else {
 				sleep(30);
 				continue;
 			}
 		}
 
-		if(fail_count > 0) ping_count = 4;
-		else ping_count = 6;
+		if(fail_count > 0) ping_count = 2;
+		else ping_count = 3;
 
-		sleep(3);
+		sleep(2);
 		ret = do_ping(ping_host, ping_count);
 
 		if(ret == 0) fail_count = 0;
@@ -133,7 +139,7 @@ DPRINTF("stamps=%u\n", monotonic_second());
 			fail_count = 0;
 			start_seconds = current_seconds;
 
-			sleep(90);
+			sleep(60);
 		}
 	}
 

@@ -18,7 +18,7 @@
 int tinc_start_main(int argc_tinc, char *argv_tinc[])
 {
 	FILE *f_tinc;
-	int tinc_server_port;
+	char *tinc_server_port;
 
 	signal(SIGPIPE, SIG_IGN);
 	signal(SIGALRM, SIG_IGN);
@@ -63,6 +63,9 @@ int tinc_start_main(int argc_tinc, char *argv_tinc[])
 		"tinc -n gfw set Device /dev/tun\n"
 #endif
 
+		"tinc -n gfw set PMTU 1431\n"
+		"tinc -n gfw set UDPDiscoveryTimeout 5\n"
+
 		"tinc -n gfw set forwarding off\n"
 		"tinc -n gfw set KeyExpire 8640000\n"
 		"nvram set tinc_ori_server=$(tinc -n gfw get gfw_server.address)\n"
@@ -75,10 +78,20 @@ int tinc_start_main(int argc_tinc, char *argv_tinc[])
 		, nvram_safe_get("firmver_num")
 	);
 
-	tinc_server_port = nvram_get_int("tinc_server_port");
-	if((tinc_server_port > 0)&&(tinc_server_port < 65536)) {
+	if(nvram_get_int("tinc_data_proto") == 0) {
 		fprintf(f_tinc,
-			"tinc -n gfw set gfw_server.Port %d\n"
+			"tinc -n gfw del TCPOnly\n"
+		);
+	} else {
+		fprintf(f_tinc,
+			"tinc -n gfw set TCPOnly yes\n"
+		);
+	}
+
+	tinc_server_port = nvram_safe_get("tinc_server_port");
+	if(nvram_get_int("tinc_server_port") != 0) {
+		fprintf(f_tinc,
+			"tinc -n gfw set gfw_server.Port %s\n"
 			"tinc -n gfw start\n"
 			, tinc_server_port
 		);

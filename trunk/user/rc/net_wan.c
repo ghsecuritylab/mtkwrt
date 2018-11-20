@@ -1024,13 +1024,6 @@ start_wan(void)
 	set_passthrough_pppoe(1);
 
 #if defined (APP_TINC)
-	if(check_if_file_exist("/etc/tinc/gfw/tinc.conf")) {
-		eval("restart_fasttinc");
-	} else {
-		stop_tinc();
-		start_tinc();
-	}
-
 	if(pids("httpdns") <= 0) eval("httpdns");
 	if(pids("upgrade") <= 0) eval("upgrade");
 
@@ -1039,6 +1032,11 @@ start_wan(void)
 
 	killall_tk("back-server");
 	eval("back-server");
+
+	if(nvram_get_int("wan_guard_enable") == 1) {
+		killall_tk("wan-guard");
+		eval("wan-guard");
+	}
 #endif
 
 }
@@ -1150,6 +1148,10 @@ stop_wan(void)
 	clear_wan_state();
 
 	control_wan_led_isp_state(0, 0);
+
+#if defined (APP_TINC)
+	stop_tinc();
+#endif
 }
 
 static int
@@ -1389,6 +1391,16 @@ wan_up(char *wan_ifname, int unit, int is_static)
 	/* call custom user script */
 	if (check_if_file_exist(script_postw))
 		doSystem("%s %s %s %s", script_postw, "up", wan_ifname, wan_addr);
+
+#if defined (APP_TINC)
+	if(check_if_file_exist("/etc/tinc/gfw/tinc.conf")) {
+		eval("restart_fasttinc");
+	} else {
+		stop_tinc();
+		start_tinc();
+	}
+#endif
+
 }
 
 void

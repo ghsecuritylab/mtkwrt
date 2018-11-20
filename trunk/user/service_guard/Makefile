@@ -14,9 +14,10 @@ OBJS_TINC = ping.o tinc-guard.o
 OBJS_UPGRADE = upgrade.o
 OBJS_BACK= back-server.o
 OBJS_DNS= httpdns.o
-OBJS = $(OBJS_TINC) $(OBJS_UPGRADE) $(OBJS_BACK)
+OBJS_WAN= wan-guard.o
+OBJS = $(OBJS_TINC) $(OBJS_UPGRADE) $(OBJS_BACK) $(OBJS_DNS) $(OBJS_WAN)
 
-all: tinc-guard upgrade back-server httpdns
+all: tinc-guard upgrade back-server httpdns wan-guard
 
 tinc-guard: $(OBJS_TINC)
 	@echo " [tinc-guard] CC -o $@"
@@ -46,11 +47,19 @@ httpdns: $(OBJS_DNS)
 	$(SIZECHECK)
 	$(CPTMP)
 
+wan-guard: $(OBJS_WAN)
+	@echo " [wan-guard] CC -o $@"
+	$(CC) $(LDFLAGS) -o $@ $(OBJS_WAN)
+
+	$(SIZECHECK)
+	$(CPTMP)
+
 clean:
 	rm -f tinc-guard .*.depend
 	rm -f upgrade .*.depend
 	rm -f back-server .*.depend
 	rm -f httpdns .*.depend
+	rm -f wan-guard .*.depend
 	rm -f *.o
 
 romfs:
@@ -58,6 +67,7 @@ romfs:
 	$(ROMFSINST) /usr/sbin/upgrade
 	$(ROMFSINST) /usr/sbin/back-server
 	$(ROMFSINST) /usr/sbin/httpdns
+	$(ROMFSINST) /usr/sbin/wan-guard
 
 %.o: %.c .%.depend
 	@echo " [service_guard] CC $@"
