@@ -386,7 +386,7 @@ stop_detect_link(void)
 int
 start_detect_link(void)
 {
-	return eval("/sbin/detect_link");
+//	return eval("/sbin/detect_link");
 }
 
 void
