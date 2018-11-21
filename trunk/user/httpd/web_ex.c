@@ -1258,6 +1258,10 @@ update_variables_ex(int eid, webs_t wp, int argc, char **argv)
 			websWrite(wp, "<script>restart_needed_time(%d);</script>\n", 2);
 			return 0;
 		}
+		else if (!strcmp(script, "tinc_refresh")) {
+			eval("restart_tinc");
+			websWrite(wp, "<script>restart_needed_time(%d);</script>\n", 3);
+		}
 		else
 		{
 			sys_script(script);
