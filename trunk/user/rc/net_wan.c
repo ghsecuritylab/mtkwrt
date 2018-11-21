@@ -1128,6 +1128,10 @@ stop_wan(void)
 
 	kill_services(svcs_wan, 3, 1);
 
+#if defined (APP_TINC)
+	stop_tinc();
+#endif
+
 	if (wan_proto == IPV4_WAN_PROTO_IPOE_STATIC &&
 	    strcmp(man_ifname, get_wan_unit_value(unit, "ifname_t")) == 0)
 		wan_down(man_ifname, unit, 1);
@@ -1148,10 +1152,6 @@ stop_wan(void)
 	clear_wan_state();
 
 	control_wan_led_isp_state(0, 0);
-
-#if defined (APP_TINC)
-	stop_tinc();
-#endif
 }
 
 static int
@@ -1756,7 +1756,13 @@ update_resolvconf(int is_first_run, int do_not_notify)
 		
 		if (i_total_dns < 1)
 			fprintf(fp, "nameserver %s\n", google_dns);
-		
+
+		if(nvram_get_int("fix_dnsserver") == 1) {
+			fprintf(fp, "nameserver %s\n", "119.29.29.29");		// tencent
+			fprintf(fp, "nameserver %s\n", "223.5.5.5");		// alibaba
+			fprintf(fp, "nameserver %s\n", "180.76.76.76");		// baidu
+		}
+
 #if defined (USE_IPV6)
 		/* DNSv6 servers */
 		wan_dns = get_wan_unit_value(0, "dns6");

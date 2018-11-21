@@ -342,7 +342,7 @@ start_dns_dhcpd(int is_ap_mode)
 	if (!is_ap_mode) {
 		is_dns_used = 1;
 		fprintf(fp, "min-port=%d\n", 4096);
-		fprintf(fp, "cache-size=%d\n", DNS_RELAY_CACHE_MAX);
+		fprintf(fp, "cache-size=%d\n", 2048);
 		fprintf(fp, "addn-hosts=%s/hosts\n", storage_dir);
 		fprintf(fp, "servers-file=%s\n", DNS_SERVERS_FILE);
 	} else {
@@ -358,8 +358,12 @@ start_dns_dhcpd(int is_ap_mode)
 
 	if(nvram_get_int("fix_dnscache") == 1) {
 		fprintf(fp, "max-ttl=%d\n", 1);			// 1 seconds
-		fprintf(fp, "max-cache-ttl=%d\n", 1);		// 1 seconds
-		fprintf(fp, "dns-forward-max=%d\n", 1024);
+		fprintf(fp, "max-cache-ttl=%d\n", 2);		// 1 seconds
+		fprintf(fp, "dns-forward-max=%d\n", 8192);
+	}
+
+	if(nvram_get_int("fix_dnsserver") == 1) {
+		fprintf(fp, "all-servers\n");
 	}
 
 	is_dhcp_used = 0;
