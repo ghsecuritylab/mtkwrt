@@ -76,12 +76,6 @@ int main(int argc, char *argv[])
 
 	sleep(5);
 
-	if(check_if_file_exist("/etc/tinc/gfw/tinc.conf")) {
-		eval("restart_fasttinc");
-	} else {
-		eval("restart_tinc");
-	}
-
 	tinc_recon_interval = nvram_get_int("tinc_recon_seconds");
 	if(tinc_recon_interval < 300) tinc_recon_interval = 300;
 	if(tinc_recon_interval > 864000) tinc_recon_interval = 864000;		// 10 days
@@ -99,18 +93,18 @@ DPRINTF("stamps=%u\n", monotonic_second());
 			start_seconds = current_seconds;
 			eval("restart_fasttinc");
 
-			sleep(60);
+			sleep(90);
 		}
 
 		if(gotuser == 1) {
 			sleep(2);			// wait tincd exit
-			if(interval_seconds > 60) {
+			if(interval_seconds > 90) {
 				gotuser = 0;
 				fail_count = 0;
 				start_seconds = current_seconds;
 				eval("restart_fasttinc");
 
-				sleep(60);
+				sleep(90);
 			} else {
 				sleep(30);
 				continue;
@@ -139,7 +133,7 @@ DPRINTF("stamps=%u\n", monotonic_second());
 			fail_count = 0;
 			start_seconds = current_seconds;
 
-			sleep(60);
+			sleep(90);
 		}
 	}
 

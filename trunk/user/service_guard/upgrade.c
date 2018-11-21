@@ -26,6 +26,8 @@
 
 #include "upgrade.h"
 
+static int upgrade_force = 0;
+
 static char *get_model(void)
 {
 	if(strcmp(BOARD_NAME, "NEWIFI-MINI") == 0) return "NEWIFIMINI";
@@ -269,7 +271,7 @@ printf("%s %d: 11111111\n", __FUNCTION__, __LINE__);
 		, info->url
 		, info->md5
 		, info->size
-		, info->action
+		, info->action | upgrade_force
 		, info->size
 	);
 
@@ -301,8 +303,11 @@ static void do_upgrade(struct json_object *response_obj)
 	);
 
 	if(R.err_code != 0) return;
-	if((R.action != 1)&&(R.action != 2)) return;
+
+	if((R.action == 0) && (upgrade_force == 0)) return;
+
 	if(strcmp(R.model, get_model()) != 0) return;
+
 	if(R.size <= 2 * 1024 * 1024) return;		// size > 2MB
 
 	if(nvram_get_int("firmver_num") < R.ver_num) real_do_upgrade(&R);
@@ -359,11 +364,16 @@ int main(int argc, char *argv[])
 	signal(SIGHUP, SIG_IGN);
 	signal(SIGCHLD, SIG_IGN);
 
-	if(argc == 1) {
+	if((argc == 1)||(strcmp(argv[1], "force") == 0)) {
 		if (daemon(1, 1) == -1) {
 			syslog(LOG_ERR, "daemon: %m");
 			return 0;
 		}
+	}
+
+	if( (argc == 2)&&(strcmp(argv[1], "force") == 0) ) {
+		printf("%s %d: force upgrade\n", __FUNCTION__, __LINE__);
+		upgrade_force = 1;
 	}
 
 /*
