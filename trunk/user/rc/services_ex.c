@@ -362,9 +362,11 @@ start_dns_dhcpd(int is_ap_mode)
 		fprintf(fp, "dns-forward-max=%d\n", 8192);
 	}
 
+/*
 	if(nvram_get_int("fix_dnsserver") == 1) {
 		fprintf(fp, "all-servers\n");
 	}
+*/
 
 	is_dhcp_used = 0;
 	if (i_dhcp_enable) {
