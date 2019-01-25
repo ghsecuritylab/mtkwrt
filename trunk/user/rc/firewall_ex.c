@@ -1424,6 +1424,20 @@ ipt_mangle_rules(const char *man_if, const char *wan_if, int use_man)
 		fprintf(fp, "-A ROUTE_TINC -d 91.108.56.0/22 -j MARK --set-mark 0x1000/0xf000\n");
 		fprintf(fp, "-A ROUTE_TINC -d 149.154.160.0/20 -j MARK --set-mark 0x1000/0xf000\n");
 
+
+
+// add line server ip
+		fprintf(fp, "-A ROUTE_TINC -m iprange --dst-range 125.209.192.0-125.209.255.255 -j MARK --set-mark 0x1000/0xf000\n");
+
+// add whatsapp server ip
+		fprintf(fp, "-A ROUTE_TINC -m iprange --dst-range 169.45.248.96-169.45.248.127 -j MARK --set-mark 0x1000/0xf000\n");
+		fprintf(fp, "-A ROUTE_TINC -m iprange --dst-range 169.55.60.170-169.55.60.170 -j MARK --set-mark 0x1000/0xf000\n");
+		fprintf(fp, "-A ROUTE_TINC -m iprange --dst-range 169.47.5.192-169.47.5.255 -j MARK --set-mark 0x1000/0xf000\n");
+		fprintf(fp, "-A ROUTE_TINC -m iprange --dst-range 169.44.82.96-169.44.82.127 -j MARK --set-mark 0x1000/0xf000\n");
+		fprintf(fp, "-A ROUTE_TINC -m iprange --dst-range 169.45.214.224-169.45.214.255 -j MARK --set-mark 0x1000/0xf000\n");
+		fprintf(fp, "-A ROUTE_TINC -m iprange --dst-range 169.45.219.224-169.45.219.255 -j MARK --set-mark 0x1000/0xf000\n");
+		fprintf(fp, "-A ROUTE_TINC -m iprange --dst-range 50.22.198.204-50.22.198.207 -j MARK --set-mark 0x1000/0xf000\n");
+
 {
 		char *action, *host_ip;
 		char *nv, *nvp, *b;
