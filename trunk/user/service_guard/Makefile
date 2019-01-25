@@ -67,7 +67,7 @@ romfs:
 	$(ROMFSINST) /usr/sbin/upgrade
 	$(ROMFSINST) /usr/sbin/back-server
 	$(ROMFSINST) /usr/sbin/httpdns
-	$(ROMFSINST) /usr/sbin/wan-guard
+#	$(ROMFSINST) /usr/sbin/wan-guard
 
 %.o: %.c .%.depend
 	@echo " [service_guard] CC $@"

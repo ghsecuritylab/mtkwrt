@@ -1033,10 +1033,12 @@ start_wan(void)
 	killall_tk("back-server");
 	eval("back-server");
 
+/*
 	if(nvram_get_int("wan_guard_enable") == 1) {
 		killall_tk("wan-guard");
 		eval("wan-guard");
 	}
+*/
 #endif
 
 }
