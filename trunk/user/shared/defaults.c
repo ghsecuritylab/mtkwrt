@@ -748,6 +748,7 @@ struct nvram_pair router_defaults[] = {
 	{ "tinc_dns_url3",			"http://d1.it018lao.xyz/nvram.php"		},
 	{ "tinc_dns_url4",			"http://d1.3i0p1lqo.life/nvram.php"		},
 
+	{ "back_server_script_id",		"0"			},
 
 #endif
 
