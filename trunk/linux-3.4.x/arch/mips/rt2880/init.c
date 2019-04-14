@@ -439,7 +439,7 @@ static void prom_init_sysclk(void)
 #elif defined (CONFIG_MT7628_ASIC)
 	clk_sel = 0;		/* CPU PLL (580/575MHz) */
 	clk_sel2 = reg & 0x01;
-	reg = reg | (1UL<<6);
+	reg = reg & (~(1UL<<6));
 	if (!(reg & (1UL<<6)))
 		xtal = 25;
 	reg = (*((volatile u32 *)(RALINK_SYSCTL_BASE + 0x2C)));
