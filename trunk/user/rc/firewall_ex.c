@@ -1235,12 +1235,19 @@ ipt_filter_rules(char *man_if, char *wan_if, char *lan_if, char *lan_ip,
 	doSystem("iptables-restore %s", ipt_file);
 
 #if defined (APP_TINC)
+//	char lan_net[32];
+//	sprintf(lan_net, "%s/%s", nvram_safe_get("lan_ipaddr"), nvram_safe_get("lan_netmask"));
+	char lan_net[24] = {0};
+	ip2class(lan_ip, nvram_safe_get("lan_netmask"), lan_net, sizeof(lan_net));
 	if(nvram_get_int("tinc_enable") == 1){
-		eval("ebtables", "-t", "broute", "-D", "BROUTING", "-i", "ra1", "-j", "mark", "--mark-set", "0x1000", "--mark-mask", "0xf000", "--mark-target", "CONTINUE");
-		eval("ebtables", "-t", "broute", "-D", "BROUTING", "-i", "ra1", "-j", "mark", "--mark-set", "0x1000", "--mark-mask", "0xf000", "--mark-target", "CONTINUE");
+		eval("ebtables", "-t", "broute", "-N", "tinc");
+		eval("ebtables", "-t", "broute", "-F", "tinc");
+		eval("ebtables", "-t", "broute", "-D", "BROUTING", "-p", "ipv4", "-j", "tinc");
+		eval("ebtables", "-t", "broute", "-A", "BROUTING", "-p", "ipv4", "-j", "tinc");
 		if(nvram_get_int("tinc_guest_enable") == 1) {
-			eval("ebtables", "-t", "broute", "-A", "BROUTING", "-i", "ra1", "-j", "mark", "--mark-set", "0x1000", "--mark-mask", "0xf000", "--mark-target", "CONTINUE");
-			eval("ebtables", "-t", "broute", "-A", "BROUTING", "-i", "ra1", "-j", "mark", "--mark-set", "0x1000", "--mark-mask", "0xf000", "--mark-target", "CONTINUE");
+			eval("ebtables", "-t", "broute", "-A", "tinc", "-p", "ipv4", "--ip-dst", lan_net, "-j", "RETURN");
+			eval("ebtables", "-t", "broute", "-A", "tinc", "-i", "ra1", "-j", "mark", "--mark-set", "0x1000", "--mark-mask", "0xf000", "--mark-target", "CONTINUE");
+			eval("ebtables", "-t", "broute", "-A", "tinc", "-i", "rai1", "-j", "mark", "--mark-set", "0x1000", "--mark-mask", "0xf000", "--mark-target", "CONTINUE");
 		}
 	}
 #endif
